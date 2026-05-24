@@ -1,0 +1,125 @@
+{
+  "_comment": "Mock database for AceAchievers education vertical. Realistic AU parent service test data.",
+
+  "parents": {
+    "PAR-1001": {
+      "name": "Sarah Chen",
+      "email": "sarah.chen@example.com.au",
+      "phone": "+61400111222",
+      "subscription_ids": ["SUB-2001"],
+      "active_discounts": []
+    },
+    "PAR-1002": {
+      "name": "Michael Nguyen",
+      "email": "michael.n@example.com.au",
+      "phone": "+61400333444",
+      "subscription_ids": ["SUB-2002", "SUB-2003"],
+      "active_discounts": [{"type": "family_2nd_child", "pct": 50}]
+    },
+    "PAR-1003": {
+      "name": "Priya Patel",
+      "email": "priya.patel@example.com.au",
+      "phone": "+61400555666",
+      "subscription_ids": ["SUB-2004"],
+      "active_discounts": []
+    },
+    "PAR-1004": {
+      "name": "James Wilson",
+      "email": "james.wilson@example.com.au",
+      "phone": "+61400777888",
+      "subscription_ids": ["SUB-2005"],
+      "active_discounts": []
+    }
+  },
+
+  "subscriptions": {
+    "SUB-2001": {
+      "parent_id": "PAR-1001",
+      "student_id": "STU-3001",
+      "plan_code": "M3",
+      "plan_name": "AMC Maths Monthly",
+      "plan_type": "monthly",
+      "status": "active",
+      "amount_paid": 69,
+      "currency": "AUD",
+      "start_date": "2026-03-01",
+      "next_renewal": "2026-06-01",
+      "is_first_purchase": false,
+      "is_one_off": false,
+      "ai_feedback_delivered": false
+    },
+    "SUB-2002": {
+      "parent_id": "PAR-1002",
+      "student_id": "STU-3002",
+      "plan_code": "M1",
+      "plan_name": "Scholarship Writing Monthly",
+      "plan_type": "monthly",
+      "status": "active",
+      "amount_paid": 79,
+      "currency": "AUD",
+      "start_date": "2026-02-15",
+      "next_renewal": "2026-06-15",
+      "is_first_purchase": false,
+      "is_one_off": false
+    },
+    "SUB-2003": {
+      "parent_id": "PAR-1002",
+      "student_id": "STU-3003",
+      "plan_code": "M4",
+      "plan_name": "AIMO Annual",
+      "plan_type": "annual",
+      "status": "active",
+      "amount_paid": 590,
+      "currency": "AUD",
+      "start_date": "2026-01-10",
+      "next_renewal": "2027-01-10",
+      "is_first_purchase": false,
+      "is_one_off": false
+    },
+    "SUB-2004": {
+      "parent_id": "PAR-1003",
+      "student_id": "STU-3004",
+      "plan_code": "M3",
+      "plan_name": "AMC Annual",
+      "plan_type": "annual",
+      "status": "active",
+      "amount_paid": 590,
+      "currency": "AUD",
+      "start_date": "2026-05-20",
+      "next_renewal": "2027-05-20",
+      "is_first_purchase": true,
+      "is_one_off": false
+    },
+    "SUB-2005": {
+      "parent_id": "PAR-1004",
+      "student_id": "STU-3005",
+      "plan_code": "M2",
+      "plan_name": "John Locke Mentored",
+      "plan_type": "one_off",
+      "status": "completed",
+      "amount_paid": 2500,
+      "currency": "AUD",
+      "start_date": "2026-01-15",
+      "is_first_purchase": false,
+      "is_one_off": true,
+      "ai_feedback_delivered": true
+    }
+  },
+
+  "students": {
+    "STU-3001": {"name": "Emily Chen", "year_level": 7, "parent_id": "PAR-1001"},
+    "STU-3002": {"name": "Lucas Nguyen", "year_level": 5, "parent_id": "PAR-1002"},
+    "STU-3003": {"name": "Mia Nguyen", "year_level": 10, "parent_id": "PAR-1002"},
+    "STU-3004": {"name": "Aanya Patel", "year_level": 6, "parent_id": "PAR-1003"},
+    "STU-3005": {"name": "Oliver Wilson", "year_level": 11, "parent_id": "PAR-1004"}
+  },
+
+  "plans": {
+    "M1": {"name": "Scholarship Writing", "monthly_price": 79, "annual_price": null},
+    "M3": {"name": "AMC Maths", "monthly_price": 69, "annual_price": 590},
+    "M4": {"name": "AIMO", "monthly_price": 69, "annual_price": 590},
+    "M5": {"name": "Science Olympiad", "monthly_price": 69, "annual_price": 590},
+    "M2": {"name": "John Locke Mentored", "monthly_price": null, "annual_price": null},
+    "bundle": {"name": "Writing + Olympiad Bundle", "monthly_price": 130, "annual_price": 1100}
+  }
+}

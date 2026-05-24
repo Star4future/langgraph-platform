@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+build/
+dist/
+.eggs/
+
+# Virtual envs
+.venv/
+venv/
+ENV/
+
+# IDE / editors
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Environment / secrets
+.env
+.env.local
+.env.production
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Vercel
+.vercel/
+
+# LangGraph local artefacts
+.langgraph/
+checkpoints/
+*.checkpoint
+
+# Logs
+*.log
+logs/
+
+# Misc
+artifacts/*/draft-v*.md
+artifacts/*/verdict-v*.md
+!artifacts/.gitkeep

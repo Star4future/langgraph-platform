@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "api/main.py": {
-      "maxDuration": 30
-    }
-  },
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/main.py" }
   ],
@@ -14,8 +9,5 @@
         { "key": "Cache-Control", "value": "no-cache" }
       ]
     }
-  ],
-  "env": {
-    "VERTICAL": "education"
-  }
+  ]
 }

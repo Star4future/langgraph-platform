@@ -1,0 +1,23 @@
+# Heavy docs and internal files not needed at runtime
+CEO_PLAN.md
+CHANGELOG.md
+EXPERIENCE-LOG.md
+EXPERT-REVIEW.md
+PROGRESS.md
+REPORT.md
+STATE.json
+
+# Internal artifacts
+artifacts/
+
+# Tests don't run on Vercel
+tests/
+
+# Eval datasets are large; only the harness code needs to be present
+eval/datasets/
+
+# Scripts only needed locally
+scripts/
+
+# Git internals
+.git/

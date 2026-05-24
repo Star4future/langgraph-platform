@@ -1,0 +1,21 @@
+{
+  "functions": {
+    "deploy/aceachievers/api/main.py": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/deploy/aceachievers/api/main.py" }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache" }
+      ]
+    }
+  ],
+  "env": {
+    "VERTICAL": "education"
+  }
+}

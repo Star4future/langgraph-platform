@@ -1,0 +1,76 @@
+"""<YOUR INDUSTRY> vertical tools.
+
+ALL FUNCTIONS START AS MOCK. Replace mock returns with real API calls once
+backend integrations are ready.
+
+Each @tool function is auto-collected into the vertical's tool registry.
+"""
+from __future__ import annotations
+
+from datetime import datetime
+
+from core.agents import tool
+
+
+# ── EXAMPLE: replace these with your industry's actual operations ─────
+
+@tool
+def lookup_record(record_id: str) -> dict:
+    """Look up a record by its ID.
+
+    Replace this docstring + return data with your industry's read operation.
+    The LLM reads the docstring to decide when to call this tool — make it
+    descriptive and unambiguous.
+    """
+    return {
+        "record_id": record_id,
+        "status": "mock_data",
+        "message": "Replace this with real lookup logic",
+    }
+
+
+@tool
+def take_action(record_id: str, action: str) -> dict:
+    """Take an action on a record.
+
+    Replace with your industry's write operation. Always return a confirmation_id
+    so the LLM can reference it in the response.
+    """
+    return {
+        "success": True,
+        "confirmation_id": f"CONF-{record_id}-{int(datetime.now().timestamp()) % 100000}",
+        "action_taken": action,
+        "next_steps": ["Customer receives email", "..."],
+    }
+
+
+@tool
+def escalate_to_human(reason: str, priority: str = "standard") -> dict:
+    """Flag a request for human review.
+
+    Use when the customer requests something the AI shouldn't decide
+    (e.g. policy edge case, complaint, high-value transaction).
+    """
+    return {
+        "escalated": True,
+        "ticket_id": f"TKT-{int(datetime.now().timestamp()) % 100000}",
+        "reason": reason,
+        "priority": priority,
+        "expected_response_hours": 24,
+    }
+
+
+# ── Add 5-7 more tools specific to your industry ──
+# Examples by industry:
+#
+# INSURANCE: lookup_policy, calculate_claim_estimate, file_claim,
+#            check_coverage, schedule_callback, request_documents
+#
+# ECOMMERCE: lookup_order, check_return_eligibility, process_refund,
+#            track_shipment, update_address, apply_coupon
+#
+# HEALTHCARE: book_appointment, lookup_patient, check_insurance,
+#             refill_prescription, send_reminder, cancel_booking
+#
+# REAL ESTATE: lookup_property, book_inspection, send_brochure,
+#              check_listing_status, calculate_stamp_duty

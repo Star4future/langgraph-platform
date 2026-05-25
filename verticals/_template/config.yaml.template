@@ -1,0 +1,36 @@
+vertical:
+  name: <your_industry>
+  display_name: "<Display Name>"
+  description: "<One-line description>"
+
+branding:
+  brand_name: "<YourBrand>"
+  support_email: "support@yourbrand.com.au"
+  website: "https://yourbrand.com.au"
+  business_hours: "Mon-Fri 9am-5pm AEST"
+  region: "Australia"
+  currency: "AUD"
+  includes_gst: true
+
+business_rules:
+  quality_threshold: 0.70
+  max_retry_count: 2
+  triage_confidence_floor: 0.50
+
+  human_escalation_triggers:
+    - intent_in: ["<risky_intent>"]
+    - urgency: "high"
+    # - refund_amount_above: 200  # uncomment if you have monetary thresholds
+    - confidence_below: 0.5
+    - keyword_match: true   # uses prompts.HIGH_RISK_KEYWORDS
+
+# Add industry-specific rules here:
+# refund_policy: ...
+# coverage_levels: ...
+# appointment_types: ...
+
+llm:
+  triage_model: "gpt-4o-mini"
+  resolver_model: "gpt-4o-mini"
+  supervisor_model: "gpt-4o-mini"
+  temperature: 0.2

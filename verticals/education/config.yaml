@@ -1,0 +1,72 @@
+vertical:
+  name: education
+  display_name: "Education / Tutoring (AU)"
+  description: "AcmeAcademy parent service workflow"
+
+branding:
+  brand_name: "AcmeAcademy"
+  support_email: "hello@acmeacademy.com.au"
+  school_email: "schools@acmeacademy.com.au"
+  website: "https://acmeacademy.com.au"
+  business_hours: "Mon-Fri 9am-5pm AEST"
+  region: "Australia"
+  currency: "AUD"
+  includes_gst: true
+
+business_rules:
+  quality_threshold: 0.70
+  max_retry_count: 2
+  triage_confidence_floor: 0.50
+
+  human_escalation_triggers:
+    - intent_in: ["progress_concern", "technical_issue"]
+    - urgency: "high"
+    - refund_amount_above: 200
+    - confidence_below: 0.5
+    - keyword_match: true   # see prompts.HIGH_RISK_KEYWORDS
+
+refund_policy:
+  first_purchase_money_back_days: 14
+  monthly_plan_refundable: false
+  annual_plan_prorated: true
+  prorated_admin_fee_aud: 50
+  human_approval_threshold_aud: 200
+
+plans:
+  M1:
+    name: "Scholarship Writing"
+    monthly_price_aud: 79
+    annual_price_aud: null
+    has_free_tier: true
+
+  M3:
+    name: "AMC Maths"
+    monthly_price_aud: 69
+    annual_price_aud: 590
+    has_free_tier: true
+    free_tier_problems: 20
+
+  M4:
+    name: "AIMO"
+    monthly_price_aud: 69
+    annual_price_aud: 590
+    has_free_tier: true
+    free_tier_problems: 20
+
+  M5:
+    name: "Science Olympiad"
+    monthly_price_aud: 69
+    annual_price_aud: 590
+    has_free_tier: true
+    free_tier_problems: 20
+
+family_discounts:
+  second_child_pct: 50
+  third_child_pct: 100
+  third_child_requires_annual: true
+
+llm:
+  triage_model: "gpt-4o-mini"
+  resolver_model: "gpt-4o-mini"
+  supervisor_model: "gpt-4o-mini"
+  temperature: 0.2

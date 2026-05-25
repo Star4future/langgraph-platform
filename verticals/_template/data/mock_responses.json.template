@@ -1,0 +1,31 @@
+[
+  {
+    "_comment": "Mock LLM scenarios for MOCK_MODE. One entry per (keywords × stage) you want to handle.",
+    "_stages": "triage | resolver | supervisor | any"
+  },
+
+  {
+    "keywords": ["<trigger word 1>", "<trigger word 2>"],
+    "stage": "triage",
+    "intent": "<one of ALLOWED_INTENTS>",
+    "confidence": 0.90,
+    "urgency": "low",
+    "requires_human": false
+  },
+
+  {
+    "keywords": ["<trigger word 1>"],
+    "stage": "resolver",
+    "tool_calls": [
+      { "name": "lookup_record", "arguments": { "record_id": "REC-001" } }
+    ],
+    "response": "Replace this with your customer-facing response. Use **markdown** for emphasis.\n\n- Bullet 1\n- Bullet 2"
+  },
+
+  {
+    "keywords": [],
+    "stage": "supervisor",
+    "quality_score": 0.82,
+    "feedback": "Approved."
+  }
+]

@@ -1,0 +1,129 @@
+[
+  {
+    "keywords": ["refund", "money back", "cancel"],
+    "stage": "triage",
+    "intent": "refund_request",
+    "confidence": 0.92,
+    "urgency": "medium",
+    "requires_human": false
+  },
+  {
+    "keywords": ["switch", "change plan", "from m3 to m4", "from m4 to m3", "upgrade", "downgrade"],
+    "stage": "triage",
+    "intent": "plan_change",
+    "confidence": 0.90,
+    "urgency": "medium",
+    "requires_human": false
+  },
+  {
+    "keywords": ["family", "second child", "sibling", "two children", "third child"],
+    "stage": "triage",
+    "intent": "family_setup",
+    "confidence": 0.88,
+    "urgency": "low",
+    "requires_human": false
+  },
+  {
+    "keywords": ["school", "purchase order", "institution"],
+    "stage": "triage",
+    "intent": "schools_enquiry",
+    "confidence": 0.91,
+    "urgency": "low",
+    "requires_human": false
+  },
+  {
+    "keywords": ["struggling", "worried", "behind", "not improving", "demotivated"],
+    "stage": "triage",
+    "intent": "progress_concern",
+    "confidence": 0.86,
+    "urgency": "medium",
+    "requires_human": true
+  },
+  {
+    "keywords": ["complaint", "lawyer", "ombudsman", "accc", "fair trading", "legal"],
+    "stage": "triage",
+    "intent": "general",
+    "confidence": 0.75,
+    "urgency": "high",
+    "requires_human": true
+  },
+  {
+    "keywords": ["price", "how much", "cost", "fee", "monthly"],
+    "stage": "triage",
+    "intent": "pricing_question",
+    "confidence": 0.93,
+    "urgency": "low",
+    "requires_human": false
+  },
+  {
+    "keywords": ["amc", "aimo", "difference", "what is"],
+    "stage": "triage",
+    "intent": "course_question",
+    "confidence": 0.90,
+    "urgency": "low",
+    "requires_human": false
+  },
+
+  {
+    "keywords": ["refund", "money back", "cancel"],
+    "stage": "resolver",
+    "tool_calls": [
+      {"name": "lookup_subscription", "arguments": {"user_email": "sarah.chen@example.com.au"}},
+      {"name": "check_refund_eligibility", "arguments": {"subscription_id": "SUB-2001", "reason": "not_using_enough"}}
+    ],
+    "response": "I've checked your account, Sarah. Your AMC Monthly subscription (SUB-2001) is past the 14-day window for the money-back guarantee, but you can **cancel anytime** with no fees — your access will continue until the end of the current billing cycle (1 June 2026).\n\nIf there's a specific reason it's not working for Emily, I'd love to flag it for our education team — sometimes switching modules (e.g. M3 AMC → M1 Writing) is a better fit. Let me know.\n\n*All amounts AUD including GST.*"
+  },
+  {
+    "keywords": ["switch", "change plan", "from m3 to m4"],
+    "stage": "resolver",
+    "tool_calls": [
+      {"name": "lookup_subscription", "arguments": {"user_email": "sarah.chen@example.com.au"}},
+      {"name": "switch_plan", "arguments": {"parent_id": "PAR-1001", "from_plan": "M3", "to_plan": "M4"}}
+    ],
+    "response": "Happy to switch you from **M3 AMC** to **M4 AIMO**, Sarah.\n\n- **Price differential:** $0/month (both plans are $69/month, AUD including GST)\n- **Effective:** Next billing cycle (1 June 2026)\n- **Progress:** Your existing M3 progress will be carried over to M4\n- **Confirmation ID:** SWITCH-PAR-1001\n\nA confirmation email is on its way. If Emily hasn't done AMC competitions before, M4 AIMO is significantly more demanding (proof-based) — let me know if you'd like guidance on whether to start M4 fresh or revisit M3 first."
+  },
+  {
+    "keywords": ["family", "second child", "sibling"],
+    "stage": "resolver",
+    "tool_calls": [
+      {"name": "lookup_subscription", "arguments": {"user_email": "michael.n@example.com.au"}},
+      {"name": "apply_family_discount", "arguments": {"parent_id": "PAR-1002", "child_count": 2}}
+    ],
+    "response": "Excellent — your **Family Plan** discount has been applied, Michael.\n\n- **Second child discount:** 50% off the youngest active subscription\n- **Applied to:** Mia's M4 AIMO Annual ($590 → $295 AUD/year, GST included)\n- **First child:** Lucas's M1 Writing remains at $79/month\n- **Saving:** ~$295/year on Mia's plan\n\nIf you ever add a 3rd child on an annual plan, that one is **free**. Let me know if you'd like to set up another child account."
+  },
+  {
+    "keywords": ["school", "purchase order"],
+    "stage": "resolver",
+    "response": "For schools and institutions we offer the **School Plan**:\n\n- **$999/year** for up to 30 students (M3 AMC, M4 AIMO, or M5 Science Olympiad)\n- Teacher dashboard + cohort analytics + bulk student roster\n- Invoice with ABN provided for your finance office\n- GST receipt for school accounting\n\nTo get started, please email **schools@acmeacademy.com.au** with your school name, year levels, number of students, and PO number (if applicable). We'll send a formal invoice within 1 business day."
+  },
+  {
+    "keywords": ["struggling", "worried", "behind"],
+    "stage": "resolver",
+    "tool_calls": [
+      {"name": "escalate_to_teacher", "arguments": {"student_id": "STU-3001", "concern": "Parent reports struggling"}}
+    ],
+    "response": "Thanks for letting me know — concerns about your child's progress are something I want our education team to look at directly, not just the AI.\n\nI've flagged this for review by our teachers (ticket TKT-3001). Someone from **education_team@acmeacademy.com.au** will review Emily's progress data and reach out within 24 hours with specific recommendations.\n\nIn the meantime, if there's anything specific you'd like them to focus on (a particular topic, motivation, exam preparation), reply to that email so they have full context."
+  },
+  {
+    "keywords": ["price", "how much", "cost"],
+    "stage": "resolver",
+    "response": "Here's a quick pricing summary (all AUD, GST included):\n\n| Module | Monthly | Annual |\n|---|---|---|\n| M1 Scholarship Writing | $79 | — |\n| M3 AMC Maths | $69 | $590 |\n| M4 AIMO | $69 | $590 |\n| M5 Science Olympiad | $69 | $590 |\n| M2 John Locke Mentored | — | from $1,500/submission |\n\n**Best value:** Annual saves ~30% vs monthly. **Family Plan:** 2nd child 50% off, 3rd child free on annual. **Bundle:** Writing + Olympiad $130/month.\n\nEvery module has a **free tier** (no credit card needed) — start at https://acmeacademy.com.au."
+  },
+  {
+    "keywords": ["amc", "aimo", "difference"],
+    "stage": "resolver",
+    "response": "Great question — here's the key difference:\n\n- **AMC (M3):** Multiple-choice · Year 6-12 · tests breadth and speed. Australia's largest maths competition, held annually.\n- **AIMO (M4):** Written full solutions · Year 9-12 · proof-based, significantly more demanding. Think of AIMO as the next tier after AMC.\n\n**Recommendation:**\n- If your child hasn't done AMC before, **start with M3** ($69/month) — much shorter learning curve\n- If they've achieved an AMC **Merit or above**, M4 AIMO is an excellent next step\n- From Year 9, many families run both M3 and M4 simultaneously"
+  },
+  {
+    "keywords": ["complaint", "lawyer", "ombudsman", "legal"],
+    "stage": "resolver",
+    "response": "I want to make sure your concern gets the right attention — I've escalated this directly to our customer service team for a personal response within 1 business day.\n\nReference: please mention this conversation when our team reaches out.\n\nIf there's anything immediate I can help with in the meantime, please let me know."
+  },
+
+  {
+    "keywords": [],
+    "stage": "supervisor",
+    "quality_score": 0.82,
+    "feedback": "Approved. Accurate facts, warm tone, appropriate next-step."
+  }
+]

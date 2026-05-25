@@ -1,0 +1,34 @@
+"""<YOUR INDUSTRY>-specific state extension."""
+from __future__ import annotations
+
+from core.state import BaseSupportState
+
+
+class VerticalState(BaseSupportState, total=False):
+    """Add industry-specific fields to the base state.
+
+    Rename this class to something domain-specific:
+        InsuranceState, EcommerceState, HealthcareState, etc.
+
+    Only add fields that are SPECIFIC to your industry. Don't redefine fields
+    that are already in BaseSupportState.
+    """
+
+    # ── Examples (replace with your fields) ─────────────────────────
+    # INSURANCE:
+    #   policy_id: str | None
+    #   claim_id: str | None
+    #   customer_tier: str | None
+    #
+    # ECOMMERCE:
+    #   order_id: str | None
+    #   cart_value: float | None
+    #
+    # HEALTHCARE:
+    #   patient_id: str | None
+    #   appointment_id: str | None
+
+    record_id: str | None
+
+
+__all__ = ["VerticalState"]

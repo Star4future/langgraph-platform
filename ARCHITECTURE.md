@@ -14,6 +14,25 @@
 4. **Production-ready deployment** — Vercel-compatible Python serverless, MOCK_MODE-by-default so public demos cost nothing
 5. **Eval-driven** — every vertical ships with a 30-scenario eval harness; CI gates resolution rate ≥ 70%
 
+### Why multi-vertical (and why the abstraction was worth the upfront cost)
+
+Customer-service workflows in education, insurance, retail, allied health, real-estate and telco-style B2C tier-1 support share the same control flow:
+
+> `classify → look up → decide → draft → quality-check → escalate-or-finish`
+
+What changes between industries:
+
+| Layer | Education | Insurance | Retail | Healthcare |
+|-------|-----------|-----------|--------|------------|
+| **Tools** | `lookup_subscription`, `calculate_prorated_refund` | `lookup_policy`, `calculate_claim_estimate` | `lookup_order`, `process_return` | `book_appointment`, `verify_eligibility` |
+| **High-risk keywords** | "lawyer", "complaint", "child struggling" | "ombudsman", "fraud", "policy dispute" | "chargeback", "consumer affairs" | "emergency", "ED", "worse" |
+| **Allowed intents** | 10 pricing / refund / family flows | 8 claim / policy / billing flows | 9 order / return / dispute flows | 7 booking / billing / triage flows |
+| **Escalation receivers** | Teacher, tutoring coordinator | Claims officer, complaints team | Returns supervisor, fraud team | Nurse, clinic manager, on-call |
+
+The engine logic — interrupts, state, retry loops, quality gating, SSE streaming — does not change. A monolithic chatbot codebase would duplicate the engine per industry. The vertical abstraction makes that duplication impossible by construction.
+
+The cost is roughly 15–20% extra design effort upfront (the vertical contract, the AST layering test, the adapter pattern). The payoff is a new vertical in ~16 hours of focused work instead of a multi-week fork.
+
 ---
 
 ## 2. High-Level Architecture

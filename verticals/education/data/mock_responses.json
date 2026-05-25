@@ -94,7 +94,7 @@
   {
     "keywords": ["school", "purchase order"],
     "stage": "resolver",
-    "response": "For schools and institutions we offer the **School Plan**:\n\n- **$999/year** for up to 30 students (M3 AMC, M4 AIMO, or M5 Science Olympiad)\n- Teacher dashboard + cohort analytics + bulk student roster\n- Invoice with ABN provided for your finance office\n- GST receipt for school accounting\n\nTo get started, please email **schools@aceachievers.com.au** with your school name, year levels, number of students, and PO number (if applicable). We'll send a formal invoice within 1 business day."
+    "response": "For schools and institutions we offer the **School Plan**:\n\n- **$999/year** for up to 30 students (M3 AMC, M4 AIMO, or M5 Science Olympiad)\n- Teacher dashboard + cohort analytics + bulk student roster\n- Invoice with ABN provided for your finance office\n- GST receipt for school accounting\n\nTo get started, please email **schools@acmeacademy.com.au** with your school name, year levels, number of students, and PO number (if applicable). We'll send a formal invoice within 1 business day."
   },
   {
     "keywords": ["struggling", "worried", "behind"],
@@ -102,12 +102,12 @@
     "tool_calls": [
       {"name": "escalate_to_teacher", "arguments": {"student_id": "STU-3001", "concern": "Parent reports struggling"}}
     ],
-    "response": "Thanks for letting me know — concerns about your child's progress are something I want our education team to look at directly, not just the AI.\n\nI've flagged this for review by our teachers (ticket TKT-3001). Someone from **education_team@aceachievers.com.au** will review Emily's progress data and reach out within 24 hours with specific recommendations.\n\nIn the meantime, if there's anything specific you'd like them to focus on (a particular topic, motivation, exam preparation), reply to that email so they have full context."
+    "response": "Thanks for letting me know — concerns about your child's progress are something I want our education team to look at directly, not just the AI.\n\nI've flagged this for review by our teachers (ticket TKT-3001). Someone from **education_team@acmeacademy.com.au** will review Emily's progress data and reach out within 24 hours with specific recommendations.\n\nIn the meantime, if there's anything specific you'd like them to focus on (a particular topic, motivation, exam preparation), reply to that email so they have full context."
   },
   {
     "keywords": ["price", "how much", "cost"],
     "stage": "resolver",
-    "response": "Here's a quick pricing summary (all AUD, GST included):\n\n| Module | Monthly | Annual |\n|---|---|---|\n| M1 Scholarship Writing | $79 | — |\n| M3 AMC Maths | $69 | $590 |\n| M4 AIMO | $69 | $590 |\n| M5 Science Olympiad | $69 | $590 |\n| M2 John Locke Mentored | — | from $1,500/submission |\n\n**Best value:** Annual saves ~30% vs monthly. **Family Plan:** 2nd child 50% off, 3rd child free on annual. **Bundle:** Writing + Olympiad $130/month.\n\nEvery module has a **free tier** (no credit card needed) — start at https://aceachievers.com.au."
+    "response": "Here's a quick pricing summary (all AUD, GST included):\n\n| Module | Monthly | Annual |\n|---|---|---|\n| M1 Scholarship Writing | $79 | — |\n| M3 AMC Maths | $69 | $590 |\n| M4 AIMO | $69 | $590 |\n| M5 Science Olympiad | $69 | $590 |\n| M2 John Locke Mentored | — | from $1,500/submission |\n\n**Best value:** Annual saves ~30% vs monthly. **Family Plan:** 2nd child 50% off, 3rd child free on annual. **Bundle:** Writing + Olympiad $130/month.\n\nEvery module has a **free tier** (no credit card needed) — start at https://acmeacademy.com.au."
   },
   {
     "keywords": ["amc", "aimo", "difference"],

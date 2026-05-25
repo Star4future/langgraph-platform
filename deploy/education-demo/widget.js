@@ -1,11 +1,11 @@
 /**
- * widget.js — AceAchievers floating chat widget (LangGraph Platform deploy)
+ * widget.js — AcmeAcademy floating chat widget (LangGraph Platform deploy)
  *
  * Drops a self-contained floating action button + chat panel onto any page.
  * Consumes the platform's SSE API.
  *
  * Usage:
- *   <script src="/widget.js" data-api="/api/chat" data-brand="AceAchievers"></script>
+ *   <script src="/widget.js" data-api="/api/chat" data-brand="AcmeAcademy"></script>
  *
  * Zero dependencies. CSS injected at init. Namespace prefix: .lp- (LangGraph Platform)
  */
@@ -379,7 +379,7 @@
           }
         }
       } catch (e) {
-        this._addTrace('Network error — please email hello@aceachievers.com.au');
+        this._addTrace('Network error — please email hello@acmeacademy.com.au');
       } finally {
         this.isLoading = false;
         this.sendBtn.disabled = false;

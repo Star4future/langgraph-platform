@@ -1,5 +1,5 @@
 {
-  "_comment": "Mock database for AceAchievers education vertical. Realistic AU parent service test data.",
+  "_comment": "Mock database for AcmeAcademy education vertical. Realistic AU parent service test data.",
 
   "parents": {
     "PAR-1001": {

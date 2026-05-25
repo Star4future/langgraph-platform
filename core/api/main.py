@@ -87,7 +87,7 @@ def create_app(*, default_vertical: str | None = None) -> FastAPI:
 
     # CORS: restrict by env var in production (comma-separated).  Default "*" is fine
     # for a local demo but must be set to your actual domain(s) for any real deploy.
-    # Example: CORS_ORIGINS="https://aceachievers.com.au,https://demo.yourbrand.com"
+    # Example: CORS_ORIGINS="https://acmeacademy.com.au,https://demo.yourbrand.com"
     _cors_origins_raw = os.getenv("CORS_ORIGINS", "*")
     _cors_origins = [o.strip() for o in _cors_origins_raw.split(",") if o.strip()]
     app.add_middleware(

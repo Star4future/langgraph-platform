@@ -20,21 +20,15 @@ A **multi-agent AI workflow engine** with a strict separation between an industr
 - **Core engine:** Triage → Resolver → Supervisor → Human-in-the-loop, with state machine, conditional routing, retry loops, and SSE streaming
 - **Vertical = directory of artifacts:** tools.py, prompts.py, state.py, config.yaml, faq.md
 - **Time to author a new vertical:** ~2 days (see `VERTICAL-AUTHORING-GUIDE.md`)
-- **First vertical:** `education/` — deployed to https://aceachievers.com.au
+- **First vertical:** `education/` — an Australian tutoring customer-support use case used as the reference implementation
 
 ---
 
 ## Why This Exists
 
-Three audiences, same engine:
+Customer support workflows often need multi-step tool use, conditional routing, retry loops, and clean human escalation. This is a reference implementation of that pattern in LangGraph, with strict layering so the same engine can serve multiple industries by swapping a vertical module (tools, prompts, FAQ, config) without touching core.
 
-| Audience | Use case |
-|----------|----------|
-| **Author's own product portfolio** | Self-use across 6 owned websites (education, emotional support, design, consulting) |
-| **AU SMB SaaS market** | $99-799/mo subscription tiers for tutoring centres, allied health, fitness, real estate, law |
-| **Mid-market white-label** | $15k-30k custom builds delivered via partner agency |
-
-See `BUSINESS-PLAN.md` for the full model.
+The design is validated end-to-end against an Australian education customer-support use case (the `education/` vertical), and the same shape extends to insurance, e-commerce, allied health, etc.
 
 ---
 
@@ -71,12 +65,12 @@ You'll see SSE events stream back: `triage` → `tool_call` → `tool_result` �
 │  └── api/     (FastAPI + SSE)                    │
 ├─────────────────────────────────────────────────┤
 │  verticals/  — plug-in industry modules         │
-│  ├── education/   ← AceAchievers                 │
+│  ├── education/   ← reference vertical           │
 │  ├── _template/   ← copy this for new industry   │
 │  └── (insurance/, ecommerce/, etc.)              │
 ├─────────────────────────────────────────────────┤
-│  deploy/   — per-customer deployment configs    │
-│  └── aceachievers/  ← Vercel + custom widget     │
+│  deploy/   — per-deploy configuration            │
+│  └── education-demo/  ← Vercel + custom widget   │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -88,7 +82,7 @@ See `ARCHITECTURE.md` for full diagrams and design decisions.
 
 ✅ Core engine (Triage / Resolver / Supervisor / Human-in-the-loop)
 ✅ Education vertical (8 mock tools, AU-localised prompts, 40-Q FAQ)
-✅ Vercel deployment config for AceAchievers
+✅ Vercel deployment config (education-demo)
 ✅ Eval harness (30 scenarios, 6 metrics)
 ✅ Mock LLM for zero-cost demos
 ✅ SSE streaming widget
@@ -120,7 +114,6 @@ Latest education vertical eval run (`eval/EVAL-RESULTS.md`):
 
 ```
 langgraph-platform/
-├── BUSINESS-PLAN.md          ← commercial model, 3 monetisation paths
 ├── ARCHITECTURE.md           ← technical architecture + design decisions
 ├── VERTICAL-AUTHORING-GUIDE.md  ← author new industry in 2 days
 ├── README.md                 ← this file
@@ -128,7 +121,7 @@ langgraph-platform/
 │
 ├── core/                     ← industry-agnostic engine
 ├── verticals/                ← industry modules (education, _template)
-├── deploy/                   ← customer deployments
+├── deploy/                   ← per-deploy configuration
 ├── eval/                     ← scenarios + harness + reports
 ├── tests/                    ← unit + integration
 └── docs/                     ← QUICKSTART, LANGGRAPH-DESIGN, DEPLOYMENT-GUIDE
@@ -140,11 +133,11 @@ langgraph-platform/
 
 ```bash
 # Deploy to Vercel (production)
-cd deploy/aceachievers
+cd deploy/education-demo
 vercel --prod
 
 # Health check
-curl https://aceachievers.com.au/api/health
+curl https://your-deploy.vercel.app/api/health
 ```
 
 See `docs/DEPLOYMENT-GUIDE.md`.
@@ -184,12 +177,9 @@ MIT — see `LICENSE`.
 
 ## Background
 
-This platform was extracted from production work on **aceachievers.com.au** — an Australian education brand — where a simpler Q&A bot (OpenAI Assistants API + File Search) hit a complexity ceiling for multi-step parent service requests. LangGraph + multi-agent architecture became necessary; productising it as a platform unlocks reuse across an owned-projects portfolio and the AU SMB market.
+Designed for and validated against an Australian education customer-support use case where a simpler Q&A bot (OpenAI Assistants API + File Search) hit a complexity ceiling for multi-step service requests (refunds, plan switches, family discount application, escalations). LangGraph + a multi-agent graph became the natural next step; structuring it as a platform with a clean `core/` ↔ `verticals/` split keeps the engine reusable across domains.
 
-Related work:
-- AceAchievers Parent Concierge v1: `aceachievers/api/main.py` (Assistants API)
-- ADR-001: Why managed vector store, not custom RAG (`aceachievers/portfolio/articles/`)
-- Original LangGraph project brief: `job-system/learning/langgraph_project_brief.md`
+The pattern transfers cleanly to insurance claims processing, loan workflow automation, allied-health booking, or order-dispute resolution — the domain is just configuration.
 
 ---
 

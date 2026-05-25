@@ -1,4 +1,4 @@
-"""Education vertical — AceAchievers AU online tutoring platform.
+"""Education vertical — AcmeAcademy AU online tutoring platform.
 
 Plug-in module that adapts the core engine to handle parent service
 workflows: subscription queries, refunds, plan switches, family discount

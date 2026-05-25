@@ -23,7 +23,7 @@ The code knows the shape of LangGraph but several pieces don't actually work the
 
 3. **`astream_events(version="v2")` is called correctly (`core/api/main.py:230`) but the event filtering is buggy.**
    - Line 234 checks `event.get("name") == "triage"` — that matches the node name registered by `graph.add_node("triage", triage)`. OK.
-   - Line 244 listens for `on_chat_model_stream`. In MOCK_MODE the `MockLLMProvider.complete()` (not `.stream()`) is what the agents call (`triage_base.py:106`, `resolver_base.py:66`, `supervisor_base.py:116`). LangGraph emits `on_chat_model_stream` only when an actual LangChain chat model object streams. **A custom Protocol class does not emit these events.** Net effect: in mock mode you'll get `thread` + `triage` + `done` and zero `token` events. The streaming demo the author plans to show investors will look broken.
+   - Line 244 listens for `on_chat_model_stream`. In MOCK_MODE the `MockLLMProvider.complete()` (not `.stream()`) is what the agents call (`triage_base.py:106`, `resolver_base.py:66`, `supervisor_base.py:116`). LangGraph emits `on_chat_model_stream` only when an actual LangChain chat model object streams. **A custom Protocol class does not emit these events.** Net effect: in mock mode you'll get `thread` + `triage` + `done` and zero `token` events. The streaming demo will look broken to anyone running it cold.
 
 4. **`add_messages` reducer is imported but barely used.**
    `core/state.py:10` imports `add_messages`; the only message added back to state is the initial user message (`state.py:98`). Triage/Resolver/Supervisor all return partial state dicts with `intent`, `draft_response`, etc., but **never append the assistant draft back into `messages`**. A multi-turn conversation will lose every prior assistant reply. For a "customer workflow" platform that's a serious gap.
@@ -87,7 +87,7 @@ This is the weakest dimension. It's a demo, not a production system, and the doc
 **Findings:**
 
 1. **`CORSMiddleware` allows `["*"]` for origins, methods, and headers (`main.py:88-93`).**
-   Trivial CSRF / data-exfiltration vector. Any website can fire credentialled requests at the chat endpoint. Production must be allow-list per deploy. The BUSINESS-PLAN promises white-label customer deployments — those will fail security review on day one.
+   Trivial CSRF / data-exfiltration vector. Any website can fire credentialled requests at the chat endpoint. Production must be allow-list per deploy — any multi-tenant or third-party-embed deployment will fail security review on day one with the current config.
 
 2. **No authentication anywhere.**
    `/api/chat`, `/api/resume`, `/api/eval`, `/api/pending-human` are all open. `eval_endpoint` is particularly worrying — it runs an arbitrary dataset path from the request body (line 175 `dataset_path=req.dataset`) and `_load_dataset` at `run_eval.py:97-107` opens whatever file path you give it. A user could pass `/etc/passwd` and the server would attempt to parse it as JSON lines. The exception is caught and re-raised as HTTPException 500 — but the error message at `main.py:180` (`Eval error: {exc}`) will leak the file content in the error string.
@@ -102,7 +102,7 @@ This is the weakest dimension. It's a demo, not a production system, and the doc
    `OpenAILLMProvider.complete` (`openai_client.py:21`) does not set a `timeout` on the OpenAI client. A hung upstream = a hung SSE stream = a Vercel function holding open until the platform's 300s default hits.
 
 6. **`SupervisorAgent._call_llm` failure case auto-passes with score 0.75 (`supervisor_base.py:126`).**
-   Comment: *"Fail safe: high score so we don't loop forever."* This means a malformed Supervisor response **silently approves** a possibly-bad draft. Hidden behaviour that an investor demo can hit at exactly the wrong moment.
+   Comment: *"Fail safe: high score so we don't loop forever."* This means a malformed Supervisor response **silently approves** a possibly-bad draft. Hidden behaviour that a live demo can hit at exactly the wrong moment.
 
 7. **No PII handling whatsoever.**
    Chat messages go into logs (`main.py:267-275` re-raises full exception text including the user message into the JSON error response). Tool results may contain emails / customer IDs and get logged. Under AU Privacy Act this is non-compliant out of the box.
@@ -176,7 +176,7 @@ The architecture of the eval is sound. The artefact shipped today is theatre.
    This passes any scenario that triggers human escalation, even if the intent classification was wrong but escalation happened anyway. T026 (`"I'll involve my lawyer"`) is graded "PASS" with intent=general (correct), tools=none (correct), human=true (correct), quality=0.70. But the system never actually checks that the response was *appropriate* — only that the routing matched.
 
 4. **30 scenarios is the floor, not a benchmark.**
-   By industry standard (e.g. LangChain's tau-bench, Anthropic's agent evals) a serious evaluation has 100-500 scenarios with per-turn judges, not 30 scenarios with a single end-state check. For a v1 self-claim this is OK but the BUSINESS-PLAN promises "eval-driven quality" as a moat — that bar is not met by 30 hand-written cases with deterministic mock responses.
+   By industry standard (e.g. LangChain's tau-bench, Anthropic's agent evals) a serious evaluation has 100-500 scenarios with per-turn judges, not 30 scenarios with a single end-state check. For a v1 reference implementation this is acceptable, but any claim that this eval bar is "production quality" is overstatement — 30 hand-written cases with deterministic mock responses is a smoke test, not a benchmark.
 
 5. **Mock-mode honesty.**
    The honest thing would be: run the eval with mock LLM → record whatever numbers come out (probably 50-60% pass rate with the current mock scenarios) → label EVAL-RESULTS.md as "mock baseline, real OpenAI uplift expected +X". Today's file presents fabricated 73% as if it came from the runner.
@@ -194,50 +194,35 @@ Documentation is the strongest visible output. Numbers and competitive claims ne
 
 **Findings:**
 
-### BUSINESS-PLAN.md
-
-1. **Year 1 revenue stack ($157k) is mathematically reasonable but assumes 26 paid customers (3 white-label + 15 Starter + 8 Pro + 6 self-use) inside 12 months from a cold start with no team.** Achievable only if Path 3 (LeapDigital pipeline) is real. If interview audience is investors, they will ask "show me the LeapDigital sales pipeline." There's no supporting evidence in the doc.
-
-2. **Competitor comparison at line 173 is opinionated but not wrong.**
-   - Voiceflow comparison is fair
-   - Intercom Fin at "$0.99/resolution" is correct ballpark
-   - Dust.tt characterised as "French/EU" — actually true (Paris-based) ✓
-   - CrewAI as "code-only no productised verticals" — technically accurate but they have a low-code platform now (mid-2025); slightly stale
-   - **Missing:** Cresta, ASAPP, Decagon, Sierra — these are the actual competitors at the $50-100k AU SMB tier in 2026. An investor familiar with the space will notice the omissions.
-
-3. **"$0.05/interaction × 200K" cost assumption (line 218)** — with GPT-4o-mini at $0.15/1M input + $0.60/1M output and an average 3-LLM-call workflow at ~2k tokens each, you're closer to $0.005/interaction. The math overstates cost 10×, which is *conservative* (good direction) but flags imprecision.
-
 ### ARCHITECTURE.md
 
-4. **Mermaid diagrams are syntactically correct and informative.** Line 21-58 high-level + line 64-74 agent graph + line 282-290 deployment topology. A senior engineer would trust this.
+1. **Mermaid diagrams are syntactically correct and informative.** Line 21-58 high-level + line 64-74 agent graph + line 282-290 deployment topology. A senior engineer would trust this.
 
-5. **§ 8.5 "Vercel auto-detect Python" is folklore-as-fact.** It's true for the AceAchievers project but it's not officially documented Vercel behaviour. If a reader Googles this they'll find conflicting answers. Cite the actual Vercel doc or remove the certainty.
+2. **§ 8.5 "Vercel auto-detect Python" is folklore-as-fact.** It worked on an earlier deploy of mine, but it isn't officially documented Vercel behaviour. If a reader Googles this they'll find conflicting answers. Cite the actual Vercel doc or remove the certainty.
 
-6. **§ 11 Roadmap promises "Long-term memory (Redis-backed)" in v1.2.** Redis is a hard add to a Vercel serverless stack — needs Upstash or equivalent. Mention the integration explicitly.
+3. **§ 11 Roadmap promises "Long-term memory (Redis-backed)" in v1.2.** Redis is a hard add to a Vercel serverless stack — needs Upstash or equivalent. Mention the integration explicitly.
 
-7. **§ 10 Failure Modes table is the best part of the doc.** Honest about Vercel cold start + MemorySaver tradeoff (line 310). Wish this honesty propagated to BUSINESS-PLAN.md.
+4. **§ 10 Failure Modes table is the best part of the doc.** Honest about the Vercel cold-start + MemorySaver tradeoff. The same honesty should propagate to the README's headline claims.
 
 ### VERTICAL-AUTHORING-GUIDE.md
 
-8. Step-numbering bug (see § D) is the biggest doc issue.
-9. The "What NOT to Do" section (line 343-353) is a nice touch — investors and authors both appreciate explicit guardrails.
-10. References at line 357-362 mention `docs/LANGGRAPH-DESIGN.md` and `scripts/check_layering.py` — **neither file exists** (`docs/` only has QUICKSTART/LANGGRAPH-DESIGN/DEPLOYMENT-GUIDE per CEO_PLAN but `scripts/` is empty per `ls scripts/`).
+5. Step-numbering bug (see § D) is the biggest doc issue.
+6. The "What NOT to Do" section is a nice touch — readers appreciate explicit guardrails.
+7. References at the end mention `docs/LANGGRAPH-DESIGN.md` and `scripts/check_layering.py` — verify both files actually exist before relying on these references.
 
 **Fix-before-interview:**
-- Pick conservative or accurate cost numbers — be one or the other, not both
-- Add Cresta/Sierra/Decagon to competitor table (note why we beat or sidestep)
-- Either create `scripts/check_layering.py` or remove the references — it's quoted in 3 places
+- Either create `scripts/check_layering.py` or remove the references — it's quoted in several places
 - Fix the step-numbering in VERTICAL-AUTHORING-GUIDE
 
 ---
 
 ## Overall verdict: **SHIP WITH FIXES**
 
-Don't show this to a Latitude IT / NobleOak interviewer today — they will absolutely run `python -m eval.run_eval` and they will absolutely poke at `/api/resume` to see what happens. Both will embarrass you.
+Don't show this to a senior interviewer today — they will absolutely run `python -m eval.run_eval` and they will absolutely poke at `/api/resume` to see what happens. Both will embarrass you.
 
-But this is **not** amateur-hour either. The architectural intent (layering test, adapter pattern, declarative verticals, tool decorator) is genuine senior-engineer thinking. After 1 working day of focused fixes — see the lists below — this becomes a confidence-building interview asset and a solid Path 3 starting point.
+But this is **not** amateur-hour either. The architectural intent (layering test, adapter pattern, declarative verticals, tool decorator) is genuine senior-engineer thinking. After 1 working day of focused fixes — see the lists below — this becomes a confidence-building interview asset.
 
-It is **not yet** ready for the SaaS path (Path 2) — production-readiness gaps in § C are too large.
+It is **not yet** ready for any multi-tenant or third-party-embed deployment — production-readiness gaps in § C are too large.
 
 ---
 
@@ -245,9 +230,9 @@ It is **not yet** ready for the SaaS path (Path 2) — production-readiness gaps
 
 1. **`/api/resume` is a stub.** `main.py:139-151` does not call `graph.ainvoke(None, config=...)`. Fix: implement real graph resumption using the checkpointed thread_id. *(Severity: critical — the HITL feature is the headline of the architecture.)*
 
-2. **EVAL-RESULTS.md numbers are fabricated.** The doc was hand-authored, never run. Fix: actually run `python -m eval.run_eval --vertical education` and commit real output, or label the existing file as "projected" prominently at the top. *(Severity: critical — integrity risk in any interview / investor conversation.)*
+2. **EVAL-RESULTS.md numbers are fabricated.** The doc was hand-authored, never run. Fix: actually run `python -m eval.run_eval --vertical education` and commit real output, or label the existing file as "projected" prominently at the top. *(Severity: critical — integrity risk in any technical conversation about this project.)*
 
-3. **CORS wildcard + no auth + no rate limiting + no LLM timeout.** Production blockers per § C, items 1-3, 5. Fix: real CORS, bearer-token auth on all `/api/` routes, `httpx.Timeout(30.0)` on OpenAI client. *(Severity: critical for Path 2/3; not for the author's self-use Path 1.)*
+3. **CORS wildcard + no auth + no rate limiting + no LLM timeout.** Production blockers per § C, items 1-3, 5. Fix: real CORS, bearer-token auth on all `/api/` routes, `httpx.Timeout(30.0)` on OpenAI client. *(Severity: critical for any internet-facing deployment; lower for a local-only demo.)*
 
 4. **Streaming in MOCK_MODE emits zero `token` events.** Documented behaviour at `core/api/sse.py:8-10` says 6 event types stream. In mock mode you get 3 (thread, triage, done). Fix: either route mock-mode Resolver text through `MockLLMProvider.stream()` and yield token events from inside `_run_chat`, or document MOCK_MODE as a non-streaming demonstration. *(Severity: high — first impression breaks.)*
 
@@ -279,17 +264,17 @@ It is **not yet** ready for the SaaS path (Path 2) — production-readiness gaps
 | **Replit Agent v2 (open architecture)** | Strong checkpointer + thread persistence to Postgres | This project uses `MemorySaver` only. Acknowledged limitation. |
 | **Sierra.ai** | Per-vertical agent products, strong eval rigour (private) | Strategy matches. Eval rigour does not. |
 
-**Verdict on positioning:** This codebase is competitive with a **senior individual's portfolio project**. It is not yet competitive with a **production agent platform from a funded company**. That's a fine and defensible position for "the author's interview project + LeapDigital delivery template" — but the BUSINESS-PLAN's claim of being a defensible SaaS moat is overreach until § C is closed.
+**Verdict on positioning:** This codebase is competitive with a **senior individual's portfolio project**. It is not yet competitive with a **production agent platform from a funded company** — that's a fine and defensible position for a portfolio piece demonstrating engineering judgement; just don't claim more than the code supports.
 
-**The interview narrative in EXPERIENCE-LOG.md § 10 is good** — it correctly emphasises "real deployment + architectural judgement + acknowledged scope". Stick to that script in the interview; do not oversell.
+**The interview narrative in EXPERIENCE-LOG.md § 9 is good** — it correctly emphasises "architectural judgement + LangGraph idioms + acknowledged scope". Stick to that script in the interview; do not oversell.
 
 ---
 
 ## Final advice to the author
 
-1. **Spend 1 working day on the 5 quick wins + 5 blockers list above.** That puts this at SHIP for interviews and Path 1 self-use.
-2. **Spend a second day implementing real `/api/resume` + replacing MemorySaver with a Postgres / Upstash checkpointer.** That puts this at SHIP for Path 3 (LeapDigital delivery).
-3. **Defer Path 2 (SaaS) until the eval rigour and rate-limiting/auth gaps are properly closed.** That's a week of work, not a day.
+1. **Spend 1 working day on the 5 quick wins + 5 blockers list above.** That puts this at SHIP for portfolio / interview use.
+2. **Spend a second day implementing real `/api/resume` + replacing `MemorySaver` with a Postgres / Upstash checkpointer.** That closes the HITL production gap.
+3. **Defer any multi-tenant / internet-facing claims until the eval rigour and rate-limiting/auth gaps in § C are properly closed.** That's a week of work, not a day.
 4. **Do build the insurance vertical.** It will validate (or invalidate) the 2-day claim, and that data point is worth more in an interview than another polish pass on the docs.
 
 The platform's bones are good. The flesh needs another day of focused work. Then it ships.

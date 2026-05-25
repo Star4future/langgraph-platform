@@ -1,4 +1,4 @@
-# Ace Achievers — Parent Knowledge Base
+# Acme Academy — Parent Knowledge Base
 # Version: 1.0 | Updated: 2026-05-23
 # Format: Each Q&A has a Short Answer + Detail bullets + See Also link
 # Used by: OpenAI Assistants API (File Search) — Parent Concierge
@@ -8,7 +8,7 @@
 ## CATEGORY A: Modules & What We Offer
 
 ### Q: What subjects and programs do you offer?
-**Short answer:** Ace Achievers offers five AI-accelerated self-study modules: Scholarship Writing (M1), John Locke Essays (M2), AMC Maths (M3), AIMO Olympiad Maths (M4), and Science Olympiad (M5).
+**Short answer:** Acme Academy offers five AI-accelerated self-study modules: Scholarship Writing (M1), John Locke Essays (M2), AMC Maths (M3), AIMO Olympiad Maths (M4), and Science Olympiad (M5).
 
 **Detail:**
 - **M1 Scholarship Writing** — Year 4-10 · prepares students for NSW Selective, ACER, EDUTEST, and private school scholarships
@@ -17,7 +17,7 @@
 - **M4 AIMO (Australian Intermediate Mathematics Olympiad)** — Year 9-12 · proof-based olympiad training with step-by-step AI explanations
 - **M5 Science Olympiad** — Year 7-12 · covers ICAS Science, Big Science Competition, Australian Science Olympiad
 
-**See also:** Full module details at aceachievers.com.au/pricing.html
+**See also:** Full module details at acmeacademy.com.au/pricing.html
 
 ---
 
@@ -31,7 +31,7 @@
 - Three-tier hints: nudge → guide → full solution — so students learn to think first
 - Free tier: 20 sample problems with one AI hint each
 
-**See also:** aceachievers.com.au/amc · Pricing from $69/month or $590/year
+**See also:** acmeacademy.com.au/amc · Pricing from $69/month or $590/year
 
 ---
 
@@ -45,7 +45,7 @@
 - Our M4 module features 3-tier hints, difficulty calibration, and mock olympiads
 - Best suited for students already confident with AMC Intermediate or Senior
 
-**See also:** aceachievers.com.au/aimo · Pricing from $69/month
+**See also:** acmeacademy.com.au/aimo · Pricing from $69/month
 
 ---
 
@@ -71,7 +71,7 @@
 - Free tier includes 9 text-type guides, checklist, and sample reports — no credit card required
 - Monthly plan ($79/month) gives unlimited AI-graded essays and mock exam simulator
 
-**See also:** aceachievers.com.au/scholarship-writing
+**See also:** acmeacademy.com.au/scholarship-writing
 
 ---
 
@@ -86,7 +86,7 @@
 - Shorter timeline than other modules — best started 3-4 months before the deadline
 - Each essay is reviewed 3 times with AI grading and source verification
 
-**See also:** aceachievers.com.au/john-locke
+**See also:** acmeacademy.com.au/john-locke
 
 ---
 
@@ -199,7 +199,7 @@
 - **Full Prep / Mentored:** M1 $299 (3 months) · M2 $1,500–$3,000 per submission
 - **School plan:** $999/year for up to 30 students (M3/M4/M5)
 
-**See also:** aceachievers.com.au/pricing.html — all tiers listed per module
+**See also:** acmeacademy.com.au/pricing.html — all tiers listed per module
 
 ---
 
@@ -226,7 +226,7 @@
 ---
 
 ### Q: Is GST included in the prices shown?
-**Short answer:** Yes — all prices on aceachievers.com.au are in AUD and include GST. No surprise tax added at checkout.
+**Short answer:** Yes — all prices on acmeacademy.com.au are in AUD and include GST. No surprise tax added at checkout.
 
 ---
 
@@ -235,7 +235,7 @@
 
 **Detail:**
 - Online: Visa · Mastercard · American Express · via secure checkout
-- Schools and institutions: email schools@aceachievers.com.au with your PO number — we'll invoice your finance office
+- Schools and institutions: email schools@acmeacademy.com.au with your PO number — we'll invoice your finance office
 - Invoices are issued with ABN for GST credit purposes
 
 ---
@@ -251,7 +251,7 @@
 - Third child: free on annual tiers only
 - The 50% discount applies to the same or different modules — both children can be doing completely different programs
 
-**See also:** aceachievers.com.au/pricing.html#bundles
+**See also:** acmeacademy.com.au/pricing.html#bundles
 
 ---
 
@@ -293,7 +293,7 @@
 
 **Detail:**
 - **14-day guarantee:** On your very first purchase, email us within 14 days for a full refund — no questions asked
-- **After 14 days:** Refund requests are considered on their merits — contact hello@aceachievers.com.au
+- **After 14 days:** Refund requests are considered on their merits — contact hello@acmeacademy.com.au
 - **One-off products (Starter $29, John Locke submissions):** Non-refundable once the AI feedback has been delivered, as the service has been rendered
 - We want every family to feel confident — if something isn't working, please talk to us first
 
@@ -317,14 +317,14 @@
 ## CATEGORY F: How It Actually Works
 
 ### Q: Is this live tutoring or self-study?
-**Short answer:** Ace Achievers is a structured self-study platform — your child works at their own pace, guided by AI. It is not live tutoring with a human teacher in real time.
+**Short answer:** Acme Academy is a structured self-study platform — your child works at their own pace, guided by AI. It is not live tutoring with a human teacher in real time.
 
 **Detail:**
 - No scheduled sessions, no Zoom calls — your child works on their own schedule
 - The AI provides feedback within seconds of submitting work — faster than waiting for a tutor
 - Structured weekly plans keep students on track without needing a human to chase them
 - Human expert reviews are available on higher tiers (M1 Full Prep, M2 Mentored) for one-on-one written feedback
-- Many families use Ace Achievers alongside a school tutor — the platform does the repetition and feedback; the tutor does the strategic coaching
+- Many families use Acme Academy alongside a school tutor — the platform does the repetition and feedback; the tutor does the strategic coaching
 
 ---
 
@@ -386,19 +386,19 @@
 
 ## CATEGORY G: Schools & Purchase Orders
 
-### Q: Can our school purchase Ace Achievers for a group of students?
+### Q: Can our school purchase Acme Academy for a group of students?
 **Short answer:** Yes — our School Plan covers up to 30 students for $999/year with a teacher dashboard and cohort analytics.
 
 **Detail:**
 - Available for M3 AMC, M4 AIMO, M5 Science Olympiad
 - Includes: teacher dashboard · student progress overview · bulk roster management · cohort analytics
 - Invoice with ABN provided · GST receipt available
-- Contact: schools@aceachievers.com.au with your school name, year levels, and number of students
+- Contact: schools@acmeacademy.com.au with your school name, year levels, and number of students
 
 ---
 
 ### Q: Does our school's finance office need an invoice?
-**Short answer:** Yes — email schools@aceachievers.com.au with your purchase order number and we'll issue a formal invoice with ABN and GST breakdown.
+**Short answer:** Yes — email schools@acmeacademy.com.au with your purchase order number and we'll issue a formal invoice with ABN and GST breakdown.
 
 ---
 
@@ -411,7 +411,7 @@
 - Data hosting: Australian cloud infrastructure (compliant with Australian Privacy Act 1988)
 - Student essays and work: private to the student's account — not shared, not used to train external models
 - We collect only what's needed: name, email, year level, and submission data
-- Parents can request deletion of all student data by contacting hello@aceachievers.com.au
+- Parents can request deletion of all student data by contacting hello@acmeacademy.com.au
 
 ---
 
@@ -422,7 +422,7 @@
 - AI feedback is generated via API calls to major AI providers — standard in EdTech
 - API agreements with AI providers include data handling terms that prohibit use of content to train future models
 - We do not use consumer-facing ChatGPT or similar tools — API relationships have different data terms
-- If you have specific data handling requirements, contact hello@aceachievers.com.au
+- If you have specific data handling requirements, contact hello@acmeacademy.com.au
 
 ---
 
@@ -461,11 +461,11 @@
 ---
 
 ### Q: My child has tried other tutoring services before. How is this different?
-**Short answer:** Most tutoring services deliver human coaching for 1-2 hours per week. Ace Achievers delivers AI feedback at any time, on every piece of work, with infinite patience — for a fraction of the cost.
+**Short answer:** Most tutoring services deliver human coaching for 1-2 hours per week. Acme Academy delivers AI feedback at any time, on every piece of work, with infinite patience — for a fraction of the cost.
 
 **Detail:**
 - Traditional tutoring: $80-$150/hour · limited to 1-2 hours/week · delayed feedback between sessions
-- Ace Achievers: $69-$79/month · instant feedback on every submission · 30 min/day structured plan
+- Acme Academy: $69-$79/month · instant feedback on every submission · 30 min/day structured plan
 - Not a replacement for great human tutoring — a complement that handles the high-repetition, high-feedback parts
 - Key differentiator: our AI marks to the same rubric as exam markers, which most human tutors aren't trained on specifically
 
@@ -473,9 +473,9 @@
 
 ## CONTACT
 
-**General enquiries:** hello@aceachievers.com.au
-**School / institutional purchases:** schools@aceachievers.com.au
-**Technical support:** hello@aceachievers.com.au (subject: Technical Support)
-**Privacy / data requests:** hello@aceachievers.com.au (subject: Privacy Request)
+**General enquiries:** hello@acmeacademy.com.au
+**School / institutional purchases:** schools@acmeacademy.com.au
+**Technical support:** hello@acmeacademy.com.au (subject: Technical Support)
+**Privacy / data requests:** hello@acmeacademy.com.au (subject: Privacy Request)
 
 *Response time: within 1 business day (AEST/AEDT).*

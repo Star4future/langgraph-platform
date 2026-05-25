@@ -1,4 +1,4 @@
-"""Education vertical tools — AceAchievers parent service mock functions.
+"""Education vertical tools — AcmeAcademy parent service mock functions.
 
 ALL FUNCTIONS ARE MOCK. They simulate a real backend (Stripe + DB) for
 demo and eval purposes. Replace with real API calls in production deploy.
@@ -59,7 +59,7 @@ def lookup_subscription(user_email: str) -> dict:
 
 @tool
 def check_refund_eligibility(subscription_id: str, reason: str) -> dict:
-    """Check whether a subscription is eligible for a refund under AceAchievers policy.
+    """Check whether a subscription is eligible for a refund under AcmeAcademy policy.
 
     Policy:
     - 14-day money-back guarantee on first purchase (full refund, no questions)
@@ -175,7 +175,7 @@ def switch_plan(parent_id: str, from_plan: str, to_plan: str) -> dict:
 
 @tool
 def apply_family_discount(parent_id: str, child_count: int) -> dict:
-    """Apply AceAchievers Family Plan discount.
+    """Apply AcmeAcademy Family Plan discount.
 
     Policy:
     - 2nd child: 50% off any monthly or annual plan
@@ -223,8 +223,8 @@ def create_child_account(parent_id: str, child_name: str, year_level: int) -> di
         "student_id": student_id,
         "child_name": child_name,
         "year_level": year_level,
-        "login_email": f"{child_name.lower().replace(' ', '.')}@aceachievers.com.au",
-        "setup_link": f"https://aceachievers.com.au/setup/{student_id}",
+        "login_email": f"{child_name.lower().replace(' ', '.')}@acmeacademy.com.au",
+        "setup_link": f"https://acmeacademy.com.au/setup/{student_id}",
         "next_steps": [
             "Parent receives email with setup link",
             "Child sets own password",
@@ -247,7 +247,7 @@ def escalate_to_teacher(student_id: str, concern: str) -> dict:
         "ticket_id": ticket_id,
         "student_id": student_id,
         "concern_summary": concern[:200],
-        "assigned_to": "education_team@aceachievers.com.au",
+        "assigned_to": "education_team@acmeacademy.com.au",
         "expected_response_hours": 24,
         "priority": "standard",
     }

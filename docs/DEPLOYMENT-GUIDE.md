@@ -15,7 +15,7 @@ Vercel build pipeline
 Vercel Serverless Function (Python 3.12)
     │ entry: deploy/<customer>/api/main.py
     ▼
-Public domain (e.g. aceachievers.com.au)
+Public domain (e.g. acmeacademy.com.au)
 ```
 
 ## Per-deployment files
@@ -23,7 +23,7 @@ Public domain (e.g. aceachievers.com.au)
 Each customer deployment lives under `deploy/<customer-name>/`:
 
 ```
-deploy/aceachievers/
+deploy/education-demo/
 ├── README.md         # customer-specific notes
 ├── .env.example      # env vars required
 ├── vercel.json       # routing + function config
@@ -34,12 +34,12 @@ deploy/aceachievers/
 ## Deploying a customer for the first time
 
 ```bash
-cd deploy/aceachievers
+cd deploy/education-demo
 vercel link              # interactive: select project / create new
 vercel --prod            # production deploy
 ```
 
-**Key:** Vercel auto-detects Python from the `.py` extension in `api/`. **Do NOT specify `"runtime": "python3.11"` in vercel.json** — that's invalid format and breaks the build (lesson learned the hard way in AceAchievers Portfolio B).
+**Key:** Vercel auto-detects Python from the `.py` extension in `api/`. **Do NOT specify `"runtime": "python3.11"` in vercel.json** — that's invalid format and breaks the build (lesson learned the hard way in an earlier deploy).
 
 ## Environment variables
 
@@ -60,10 +60,10 @@ Set these in **Vercel Project Settings → Environment Variables**:
 
 ## Adding a new customer of an existing vertical
 
-You have AceAchievers running. Now MathPro Tutoring (different brand, same education vertical) wants to deploy:
+You have AcmeAcademy running. Now MathPro Tutoring (different brand, same education vertical) wants to deploy:
 
 ```bash
-cp -r deploy/aceachievers deploy/mathpro
+cp -r deploy/education-demo deploy/mathpro
 cd deploy/mathpro
 # Edit widget.js — change brand + colors
 # Edit README.md — point at mathpro.com.au domain
@@ -96,14 +96,14 @@ Total: **~2.5 days** for a completely new industry + customer.
 ## Custom domain
 
 ```bash
-vercel domains add aceachievers.com.au
+vercel domains add acmeacademy.com.au
 # Follow DNS instructions
 ```
 
 ## Health monitoring
 
 ```bash
-curl https://aceachievers.com.au/api/health
+curl https://acmeacademy.com.au/api/health
 ```
 
 Should return:
@@ -128,10 +128,10 @@ vercel rollback <previous-deployment>    # specific deploy
 
 ## Multi-deployment workflows
 
-For the SaaS / white-label scenarios:
+For multi-deploy scenarios:
 
 | Scenario | Approach |
 |----------|----------|
-| 1 customer, dedicated domain | `deploy/<customer>/` + their own Vercel project |
-| Multiple customers, shared platform | One Vercel project, multiple `deploy/` directories, route by domain header |
-| SaaS multi-tenant | (v2 roadmap) — single deploy, vertical+brand selected by subdomain |
+| Single deploy, dedicated domain | `deploy/<name>/` + its own Vercel project |
+| Multiple deploys, shared platform | One Vercel project, multiple `deploy/` directories, route by domain header |
+| Multi-tenant | (v2 roadmap) — single deploy, vertical+brand selected by subdomain |

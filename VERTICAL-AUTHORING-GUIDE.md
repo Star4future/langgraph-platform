@@ -14,7 +14,7 @@ A "vertical" is an industry-flavoured plug-in. Same engine, different lens.
 
 ```
 verticals/
-├── education/        ← AceAchievers (built, reference example)
+├── education/        ← AcmeAcademy (built, reference example)
 ├── _template/        ← copy this; the skeleton for new industries
 └── insurance/        ← (your new vertical goes here)
 ```
@@ -146,7 +146,7 @@ You have access to these tools: [tool list]
 """
 ```
 
-**Critical:** The "RULES" section prevents LLM hallucination. Steal AceAchievers's pattern verbatim and adapt.
+**Critical:** The "RULES" section prevents LLM hallucination. Steal AcmeAcademy's pattern verbatim and adapt.
 
 #### 3c. `SUPERVISOR_PROMPT`
 

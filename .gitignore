@@ -49,3 +49,6 @@ artifacts/*/verdict-v*.md
 !artifacts/.gitkeep
 
 .vercel
+
+# Internal strategy / commercial planning — kept locally, not pushed
+BUSINESS-PLAN.md

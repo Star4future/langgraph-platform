@@ -40,7 +40,7 @@ flowchart TB
     end
 
     subgraph DEPLOY [deploy/]
-        AceA[aceachievers/<br/>Vercel config + widget]
+        AceA[education-demo/<br/>Vercel config + widget]
         Other[other-customer/<br/>future]
     end
 
@@ -207,7 +207,7 @@ def get_llm_provider(vertical_config):
     return OpenAILLMProvider(model=os.getenv("LLM_MODEL", "gpt-4o-mini"))
 ```
 
-This is the same pattern AceAchievers Portfolio B used successfully.
+This is the same pattern an earlier deploy used successfully.
 
 ---
 
@@ -240,7 +240,7 @@ POST /api/eval
   → runs eval harness, returns metrics JSON
 ```
 
-**Why SSE not WebSocket:** single-direction streaming (server→client), HTTP/1.1 friendly, native browser support without library, lower complexity. Same decision rationale as AceAchievers Portfolio B (documented in ADR-001).
+**Why SSE not WebSocket:** single-direction streaming (server→client), HTTP/1.1 friendly, native browser support without library, lower complexity. Same decision rationale as an earlier deploy (documented in ADR-001).
 
 ---
 
@@ -263,14 +263,14 @@ LangGraph already provides state, routing, interrupts. Adding another layer crea
 
 ### 8.4 Why FastAPI not Flask / Litestar
 
-FastAPI: type-safe, async-native, OpenAPI-out-of-box, Vercel Python runtime tested. Same engine AceAchievers Portfolio B uses. Lower context-switch cost.
+FastAPI: type-safe, async-native, OpenAPI-out-of-box, Vercel Python runtime tested. Same engine an earlier deploy uses. Lower context-switch cost.
 
 ### 8.5 Why Vercel for deploy
 
 - Free tier sufficient for early customers
 - Python 3.12 + Fluid Compute = no cold-start issues
 - Auto-detects Python from `.py` extension (no runtime config in vercel.json)
-- Same deployment model as AceAchievers Portfolio B (deployment patterns reused)
+- Same deployment model as an earlier deploy (deployment patterns reused)
 
 ### 8.6 Why `_template/` not `_skeleton/` or `_blank/`
 
@@ -284,7 +284,7 @@ Sorted-first in `ls` output (`_` < `a`). Authors see it immediately when enterin
 graph LR
     Repo[GitHub Repo] --> CI{CI: tests + eval}
     CI -->|pass| Vercel[Vercel Build]
-    Vercel --> Prod1[aceachievers.com.au<br/>education vertical]
+    Vercel --> Prod1[acmeacademy.com.au<br/>education vertical]
     Vercel --> Prod2[insurance-demo.vercel.app<br/>insurance vertical]
     Vercel --> Prod3[customer-x.com<br/>education vertical<br/>custom config]
 ```
@@ -307,7 +307,7 @@ The same platform code serves multiple deploys via different vertical selections
 | Tool call loops infinitely | `retry_count` ≥ 2 → human escalation | Hard cap in `graph_builder` |
 | OpenAI API down | Real → Mock fallback | LLM adapter detects 5xx, falls back |
 | Vertical loads with missing tool | Graph build fails fast | `build_graph` validates tool registry at import |
-| User session lost on Vercel cold start | `thread_id` in localStorage | Browser-side persistence (proven in AceAchievers Portfolio B) |
+| User session lost on Vercel cold start | `thread_id` in localStorage | Browser-side persistence (proven in an earlier deploy) |
 | Vertical author breaks core | Layering lint catches imports | `scripts/check_layering.py` runs in CI |
 
 ---
@@ -320,7 +320,7 @@ The same platform code serves multiple deploys via different vertical selections
 | v1.1 | Multi-LLM routing (cheap for Triage, premium for Resolver) | Insurance demo |
 | v1.2 | Long-term memory (Redis-backed) | E-commerce |
 | v1.3 | Customer-portal vertical authoring UI | Real-estate |
-| v2.0 | Multi-tenant SaaS hosting | Allied health, fitness |
+| v2.0 | Multi-tenant hosting + per-tenant isolation | Allied health, fitness |
 
 ---
 

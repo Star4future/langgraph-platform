@@ -1,4 +1,4 @@
-# Deploy: AceAchievers
+# Deploy: AcmeAcademy
 
 Production Vercel deployment of the LangGraph Platform using the `education` vertical.
 
@@ -14,7 +14,7 @@ Production Vercel deployment of the LangGraph Platform using the `education` ver
 ## Local dev
 
 ```bash
-cd deploy/aceachievers
+cd deploy/education-demo
 cp .env.example .env
 pip install -r ../../requirements.txt
 VERTICAL=education uvicorn api.main:app --reload --port 8000
@@ -30,17 +30,17 @@ curl -N -X POST http://localhost:8000/api/chat \
 ## Deploy to production
 
 ```bash
-cd deploy/aceachievers
+cd deploy/education-demo
 vercel --prod
 ```
 
 **Important:** Vercel project settings should NOT set `OPENAI_API_KEY` — the production deploy stays in MOCK_MODE so anyone visiting can use the demo without billing the project. Real LLM mode is enabled only for local dev or internal staging.
 
-## Embed widget on aceachievers.com.au
+## Embed widget on acmeacademy.com.au
 
 Add to homepage:
 ```html
-<script src="/widget.js" data-api="https://aceachievers.com.au/api/chat"></script>
+<script src="/widget.js" data-api="https://acmeacademy.com.au/api/chat"></script>
 ```
 
 Widget will inject a floating chat bubble in the bottom-right corner.
@@ -48,7 +48,7 @@ Widget will inject a floating chat bubble in the bottom-right corner.
 ## Health check
 
 ```bash
-curl https://aceachievers.com.au/api/health
+curl https://acmeacademy.com.au/api/health
 ```
 
 ## Architecture note
@@ -56,8 +56,8 @@ curl https://aceachievers.com.au/api/health
 This deployment uses:
 - **Platform core** from `../../core/` (unchanged across all deploys)
 - **Education vertical** from `../../verticals/education/` (industry-specific)
-- **AceAchievers branding** here in `deploy/aceachievers/` (customer-specific)
+- **AcmeAcademy branding** here in `deploy/education-demo/` (customer-specific)
 
-To deploy a different customer using the same education vertical, copy this entire directory (`deploy/aceachievers/` → `deploy/other-school/`) and edit only `widget.js` (branding) + `vercel.json` (domain).
+To deploy a different customer using the same education vertical, copy this entire directory (`deploy/education-demo/` → `deploy/other-school/`) and edit only `widget.js` (branding) + `vercel.json` (domain).
 
 To deploy a completely different industry (e.g. insurance), use a different vertical — see `verticals/insurance/` (when authored) and create `deploy/<customer>/` using it.

@@ -6,7 +6,7 @@
 
 | Tech | Strength | Weakness | When we use it |
 |------|----------|----------|----------------|
-| Raw OpenAI API | Simple, single call | No state, no orchestration | One-shot Q&A bots (AceAchievers Portfolio B) |
+| Raw OpenAI API | Simple, single call | No state, no orchestration | One-shot Q&A bots (an earlier deploy) |
 | LangChain | Linear pipelines, lots of integrations | Hard to express loops + conditional branches | When you have a fixed N-step pipeline |
 | **LangGraph** | Stateful graphs, conditional routing, HITL, retries | Steeper learning curve | **This platform — complex multi-step workflows** |
 
@@ -149,7 +149,7 @@ We emit 6 SSE event types per chat (`core/api/sse.py`):
 | `citations` | Sources used | Render source pills |
 | `done` | Stream ended | Final formatting + analytics |
 
-Frontend (`deploy/aceachievers/widget.js`) shows the Agent thinking process inline — a deliberate UX choice to differentiate from "magic black box" chatbots.
+Frontend (`deploy/education-demo/widget.js`) shows the Agent thinking process inline — a deliberate UX choice to differentiate from "magic black box" chatbots.
 
 ---
 
@@ -168,6 +168,6 @@ Frontend (`deploy/aceachievers/widget.js`) shows the Agent thinking process inli
 
 If your workflow is **single-call Q&A** (no tools, no state, no branching), use the raw OpenAI API — LangGraph is overkill.
 
-AceAchievers Portfolio B (parent concierge FAQ bot) is a good example of "didn't need LangGraph." This platform is what came next when the FAQ bot hit complexity ceiling.
+an earlier deploy (parent concierge FAQ bot) is a good example of "didn't need LangGraph." This platform is what came next when the FAQ bot hit complexity ceiling.
 
-See the ADR in `aceachievers/portfolio/articles/ADR-001-retrieval-stack.md` for the parallel decision on RAG.
+See the ADR in `AcmeAcademy/portfolio/articles/ADR-001-retrieval-stack.md` for the parallel decision on RAG.

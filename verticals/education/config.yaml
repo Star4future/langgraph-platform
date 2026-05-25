@@ -1,13 +1,13 @@
 vertical:
   name: education
   display_name: "Education / Tutoring (AU)"
-  description: "AceAchievers parent service workflow"
+  description: "AcmeAcademy parent service workflow"
 
 branding:
-  brand_name: "AceAchievers"
-  support_email: "hello@aceachievers.com.au"
-  school_email: "schools@aceachievers.com.au"
-  website: "https://aceachievers.com.au"
+  brand_name: "AcmeAcademy"
+  support_email: "hello@acmeacademy.com.au"
+  school_email: "schools@acmeacademy.com.au"
+  website: "https://acmeacademy.com.au"
   business_hours: "Mon-Fri 9am-5pm AEST"
   region: "Australia"
   currency: "AUD"

@@ -1,4 +1,4 @@
-"""Vercel entry point for the AceAchievers deployment.
+"""Vercel entry point for the AcmeAcademy deployment.
 
 Uses the platform's ``core.api.create_app`` factory + selects the
 education vertical. Vercel auto-detects this as a Python serverless
@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 
 # ─── Project root on sys.path ──────────────────────────────────────
-# deploy/aceachievers/api/main.py → ../../../ is project root
+# deploy/education-demo/api/main.py → ../../../ is project root
 ROOT = Path(__file__).resolve().parents[3]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))

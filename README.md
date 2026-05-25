@@ -26,9 +26,29 @@ A **multi-agent AI workflow engine** with a strict separation between an industr
 
 ## Why This Exists
 
-Customer support workflows often need multi-step tool use, conditional routing, retry loops, and clean human escalation. This is a reference implementation of that pattern in LangGraph, with strict layering so the same engine can serve multiple industries by swapping a vertical module (tools, prompts, FAQ, config) without touching core.
+Customer support workflows across most industries follow the same shape:
 
-The design is validated end-to-end against an Australian education customer-support use case (the `education/` vertical), and the same shape extends to insurance, e-commerce, allied health, etc.
+```
+classify intent  →  look up records  →  make a decision  →
+draft reply  →  quality-check  →  escalate when uncertain
+```
+
+The *plumbing* (state machine, routing, retry, human-in-the-loop, streaming) is identical industry to industry — what changes is the **tools, prompts, FAQ, and business rules**. Yet most production chatbots bake the industry assumptions deep into the engine, so moving to a new industry means a fork or rewrite.
+
+This platform separates the plumbing (`core/`) from the industry artifacts (`verticals/`) and enforces the separation with an AST-based layering test in CI. A single engine serves materially different businesses without code forks.
+
+### Industries the same architecture fits
+
+| Industry | Example workflows handled by this shape |
+|----------|----------------------------------------|
+| **Education / tutoring** | Subscription lookup, plan changes, prorated refunds, family discounts, teacher escalation |
+| **Insurance / financial services** | Policy lookup, claim filing, premium calculation, callback scheduling, complaint escalation |
+| **Retail / e-commerce** | Order status, returns and exchanges, loyalty tier upgrades, dispute escalation |
+| **Allied health / clinics** | Appointment booking, billing queries, intake triage, urgent-symptom escalation |
+| **Property / real-estate** | Listing inquiries, application status, inspection scheduling, tenant escalation |
+| **Large B2C retail / telco** | Tier-1 support deflection, account changes, churn-save offers, supervisor handoff |
+
+The `education/` vertical is the reference implementation, built end-to-end with 8 tools, 30 eval scenarios, 40 FAQ entries, and a working Vercel deployment. Other industries slot in via the same six-file vertical contract (`tools.py`, `prompts.py`, `state.py`, `config.yaml`, `data/faq.md`, `data/mock_responses.json`) — see [`VERTICAL-AUTHORING-GUIDE.md`](VERTICAL-AUTHORING-GUIDE.md) for the step-by-step.
 
 ---
 

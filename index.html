@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LangGraph Platform — Multi-Vertical AI Customer Workflows</title>
+<meta name="description" content="Production-ready multi-agent customer workflow engine. Industry-agnostic core + pluggable verticals. Built with LangGraph + FastAPI + OpenAI." />
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg-card: #131826;
+    --border: #1f2937;
+    --text: #e5e7eb;
+    --text-dim: #9ca3af;
+    --accent: #6366f1;
+    --accent-hover: #4f46e5;
+    --green: #10b981;
+    --amber: #f59e0b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  .container { max-width: 980px; margin: 0 auto; padding: 48px 24px; }
+  header { margin-bottom: 48px; }
+  .badge {
+    display: inline-block;
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--accent);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #fff 0%, #9ca3af 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .subtitle { font-size: 18px; color: var(--text-dim); margin-bottom: 24px; }
+  .links { display: flex; gap: 12px; flex-wrap: wrap; }
+  .links a {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .links a:hover { border-color: var(--accent); background: rgba(99,102,241,0.1); }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .card h2 {
+    font-size: 18px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+
+  /* Chat */
+  .chat-card { grid-column: 1 / -1; }
+  .messages {
+    background: rgba(10, 14, 26, 0.5);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    min-height: 280px;
+    max-height: 360px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+    font-size: 14px;
+  }
+  .msg { margin-bottom: 12px; padding: 10px 14px; border-radius: 8px; }
+  .msg.user { background: rgba(99,102,241,0.15); border-left: 3px solid var(--accent); }
+  .msg.bot { background: rgba(255,255,255,0.04); border-left: 3px solid var(--green); }
+  .msg.event {
+    background: rgba(245,158,11,0.08);
+    border-left: 3px solid var(--amber);
+    color: var(--text-dim);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+  }
+  .msg .role { font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); margin-bottom: 4px; }
+  .input-row { display: flex; gap: 8px; }
+  .input-row input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+  }
+  .input-row input:focus { border-color: var(--accent); }
+  .input-row button {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .input-row button:hover { background: var(--accent-hover); }
+  .input-row button:disabled { opacity: 0.6; cursor: wait; }
+  .examples { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .examples button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .examples button:hover { border-color: var(--accent); color: var(--text); }
+
+  pre { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; line-height: 1.5; color: var(--text-dim); white-space: pre-wrap; }
+  .stat { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .stat:last-child { border-bottom: 0; }
+  .stat .k { color: var(--text-dim); }
+  .stat .v { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+  footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 13px; text-align: center; }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="badge">⬩ LIVE DEMO · MOCK_MODE</span>
+      <h1>LangGraph Multi-Vertical Platform</h1>
+      <p class="subtitle">
+        Production-ready customer workflow engine. Industry-agnostic <code>core/</code> + pluggable <code>verticals/</code>.<br>
+        Education vertical loaded · deployed to <strong>aceachievers.com.au</strong> as the reference implementation.
+      </p>
+      <div class="links">
+        <a href="https://github.com/Star4future/langgraph-platform" target="_blank">⭐ GitHub</a>
+        <a href="/api/docs" target="_blank">📘 API Docs</a>
+        <a href="/api/health" target="_blank">❤️ Health</a>
+        <a href="https://github.com/Star4future/langgraph-platform/blob/main/ARCHITECTURE.md" target="_blank">🏗️ Architecture</a>
+        <a href="https://github.com/Star4future/langgraph-platform/blob/main/EXPERT-REVIEW.md" target="_blank">🔍 Expert Review</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Chat -->
+      <div class="card chat-card">
+        <h2><span class="dot"></span> Try the chat — Education vertical</h2>
+        <div id="messages" class="messages">
+          <div class="msg bot">
+            <div class="role">Assistant</div>
+            Hi — I'm the AceAchievers parent assistant. Try one of the example questions below, or ask anything about subscriptions, plans, refunds, or family discounts.
+          </div>
+        </div>
+        <div class="input-row">
+          <input id="input" type="text" placeholder="Ask a question..." autocomplete="off" />
+          <button id="send">Send</button>
+        </div>
+        <div class="examples">
+          <button data-q="How much is the AMC monthly plan?">💰 Pricing</button>
+          <button data-q="I want to switch from M3 to M4 and refund the difference">🔄 Plan change + refund</button>
+          <button data-q="Do you offer a discount for two children?">👨‍👩‍👧 Family discount</button>
+          <button data-q="My child is struggling, can I speak to a teacher?">🆘 Escalation</button>
+          <button data-q="I want to cancel and get my money back, I've only had it 3 days">↩️ Refund</button>
+        </div>
+      </div>
+
+      <!-- Architecture -->
+      <div class="card">
+        <h2>🧠 Agent flow</h2>
+<pre>User message
+   ↓
+🔍 Triage      → intent + urgency
+   ↓
+🛠️ Resolver    → tool calls + draft
+   ↓
+👮 Supervisor  → quality score
+   ↓
+   ├─ ≥ 0.7  → ✓ reply
+   ├─ &lt; 0.7  → ↻ retry (max 2)
+   └─ stuck  → 🙋 human</pre>
+      </div>
+
+      <!-- Stats -->
+      <div class="card">
+        <h2>📊 At a glance</h2>
+        <div class="stat"><span class="k">Verticals shipped</span><span class="v">1 / N</span></div>
+        <div class="stat"><span class="k">Education tools</span><span class="v">8</span></div>
+        <div class="stat"><span class="k">Eval scenarios</span><span class="v">30</span></div>
+        <div class="stat"><span class="k">New-vertical time</span><span class="v">~2 days</span></div>
+        <div class="stat"><span class="k">SSE event types</span><span class="v">6</span></div>
+        <div class="stat"><span class="k">Layering enforcement</span><span class="v">AST test</span></div>
+      </div>
+    </div>
+
+    <footer>
+      Built with LangGraph 0.2 · FastAPI · OpenAI · Vercel · MIT licensed<br>
+      <a href="https://github.com/Star4future/langgraph-platform">github.com/Star4future/langgraph-platform</a>
+    </footer>
+  </div>
+
+<script>
+(function() {
+  const msgsEl  = document.getElementById('messages');
+  const input   = document.getElementById('input');
+  const sendBtn = document.getElementById('send');
+
+  function append(role, text, cls) {
+    const div = document.createElement('div');
+    div.className = 'msg ' + (cls || role);
+    const r = document.createElement('div'); r.className = 'role'; r.textContent = role;
+    const c = document.createElement('div'); c.textContent = text;
+    div.appendChild(r); div.appendChild(c);
+    msgsEl.appendChild(div);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+    return c;
+  }
+
+  async function ask(question) {
+    if (!question.trim()) return;
+    append('You', question, 'user');
+    input.value = '';
+    sendBtn.disabled = true;
+
+    const botBody = append('Assistant', '', 'bot');
+    let traceEl = null;
+    const sessionId = 'web-' + Date.now();
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: question,
+          session_id: sessionId,
+          customer_id: 'web_visitor'
+        })
+      });
+      if (!res.body) throw new Error('No response body');
+
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf = '';
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        const lines = buf.split('\n');
+        buf = lines.pop();
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          let payload;
+          try { payload = JSON.parse(line.slice(6)); } catch { continue; }
+
+          if (payload.type === 'triage') {
+            traceEl = append('event', `triage → intent: ${payload.intent} · confidence: ${payload.confidence} · urgency: ${payload.urgency}`, 'event');
+          } else if (payload.type === 'token') {
+            botBody.textContent += payload.delta;
+            msgsEl.scrollTop = msgsEl.scrollHeight;
+          } else if (payload.type === 'human_escalation') {
+            append('event', `🙋 escalated to human (reason: ${payload.reason})`, 'event');
+          } else if (payload.type === 'done') {
+            append('event', `done · ${payload.latency_ms}ms · ${payload.tokens} tokens · ${payload.mode}`, 'event');
+          }
+        }
+      }
+    } catch (e) {
+      botBody.textContent = '⚠️ Error: ' + e.message;
+    } finally {
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', () => ask(input.value));
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') ask(input.value); });
+  document.querySelectorAll('.examples button').forEach(b => {
+    b.addEventListener('click', () => ask(b.dataset.q));
+  });
+})();
+</script>
+</body>
+</html>

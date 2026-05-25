@@ -2,6 +2,8 @@
 
 > Production-ready multi-agent AI customer workflows with industry-pluggable verticals.
 > Built on **LangGraph** + **FastAPI** + **OpenAI** · Deployed on **Vercel**
+>
+> 🌐 **Live demo:** [langgraph-platform-demo.vercel.app](https://langgraph-platform-demo.vercel.app)
 
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)]()
 [![LangGraph](https://img.shields.io/badge/LangGraph-0.2-1C3C3C)]()
@@ -28,9 +30,9 @@ Three audiences, same engine:
 
 | Audience | Use case |
 |----------|----------|
-| **Nemo's project portfolio** | Self-use across 6 owned websites (education, emotional support, design, consulting) |
+| **Author's own product portfolio** | Self-use across 6 owned websites (education, emotional support, design, consulting) |
 | **AU SMB SaaS market** | $99-799/mo subscription tiers for tutoring centres, allied health, fitness, real estate, law |
-| **Mid-market white-label** | $15k-30k custom builds delivered via LeapDigital agency |
+| **Mid-market white-label** | $15k-30k custom builds delivered via partner agency |
 
 See `BUSINESS-PLAN.md` for the full model.
 
@@ -182,7 +184,7 @@ MIT — see `LICENSE`.
 
 ## Background
 
-This platform was extracted from production work on **aceachievers.com.au** where a simpler Q&A bot (OpenAI Assistants API + File Search) hit a complexity ceiling for multi-step parent service requests. LangGraph + multi-agent architecture became necessary; productising it as a platform unlocks reuse across Nemo's project portfolio and AU SMB market.
+This platform was extracted from production work on **aceachievers.com.au** — an Australian education brand — where a simpler Q&A bot (OpenAI Assistants API + File Search) hit a complexity ceiling for multi-step parent service requests. LangGraph + multi-agent architecture became necessary; productising it as a platform unlocks reuse across an owned-projects portfolio and the AU SMB market.
 
 Related work:
 - AceAchievers Parent Concierge v1: `aceachievers/api/main.py` (Assistants API)
@@ -191,4 +193,4 @@ Related work:
 
 ---
 
-*Built by Nemo · Engineered with Atlas · May 2026*
+*Built by [@Star4future](https://github.com/Star4future) · May 2026 · MIT licensed*

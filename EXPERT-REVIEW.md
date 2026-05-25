@@ -2,7 +2,7 @@
 
 **Reviewer:** Senior LangGraph engineer (independent second opinion)
 **Reviewed:** 2026-05-25
-**Subject of review:** `C:\AI_workspace\claudecode folder\langgraph-platform\` (v1, built by Atlas/Opus 4.7 in a single session)
+**Subject of review:** `C:\AI_workspace\claudecode folder\langgraph-platform\` (v1, built by the v1 author in a single session)
 **Brief:** Score the platform on 6 dimensions, identify blockers and quick wins, decide ship / ship-with-fixes / do-not-ship.
 
 > **TL;DR** — The architectural intent is mature and the layering discipline is genuinely above average for a one-session build. But several pieces are theatre, not engineering: the eval results were never run, the `/api/resume` endpoint does not actually resume the graph, the SSE streaming will emit zero `token` events in MOCK_MODE, and the "2-day vertical" claim has a step-numbering bug that will trip the first reader. Fixable in ~1 day. Not ready for a Latitude IT / NobleOak senior interview as-is — but a strong base after the fixes below.
@@ -23,7 +23,7 @@ The code knows the shape of LangGraph but several pieces don't actually work the
 
 3. **`astream_events(version="v2")` is called correctly (`core/api/main.py:230`) but the event filtering is buggy.**
    - Line 234 checks `event.get("name") == "triage"` — that matches the node name registered by `graph.add_node("triage", triage)`. OK.
-   - Line 244 listens for `on_chat_model_stream`. In MOCK_MODE the `MockLLMProvider.complete()` (not `.stream()`) is what the agents call (`triage_base.py:106`, `resolver_base.py:66`, `supervisor_base.py:116`). LangGraph emits `on_chat_model_stream` only when an actual LangChain chat model object streams. **A custom Protocol class does not emit these events.** Net effect: in mock mode you'll get `thread` + `triage` + `done` and zero `token` events. The streaming demo Nemo plans to show investors will look broken.
+   - Line 244 listens for `on_chat_model_stream`. In MOCK_MODE the `MockLLMProvider.complete()` (not `.stream()`) is what the agents call (`triage_base.py:106`, `resolver_base.py:66`, `supervisor_base.py:116`). LangGraph emits `on_chat_model_stream` only when an actual LangChain chat model object streams. **A custom Protocol class does not emit these events.** Net effect: in mock mode you'll get `thread` + `triage` + `done` and zero `token` events. The streaming demo the author plans to show investors will look broken.
 
 4. **`add_messages` reducer is imported but barely used.**
    `core/state.py:10` imports `add_messages`; the only message added back to state is the initial user message (`state.py:98`). Triage/Resolver/Supervisor all return partial state dicts with `intent`, `draft_response`, etc., but **never append the assistant draft back into `messages`**. A multi-turn conversation will lose every prior assistant reply. For a "customer workflow" platform that's a serious gap.
@@ -48,7 +48,7 @@ The code knows the shape of LangGraph but several pieces don't actually work the
 
 ## B. Architectural cleanliness — **Score: 4 / 5**
 
-This is the part Atlas got most right. Layering discipline is real, not cargo-culted.
+This is the part the v1 author got most right. Layering discipline is real, not cargo-culted.
 
 **Findings:**
 
@@ -129,7 +129,7 @@ Could a stranger build a new vertical in 2 days from these docs alone? Probably.
    Doc says "5-Step Workflow" at line 26 but actually has Steps 1, 2, 3, 4, 5, 6, 7, 8. The Validation Checklist at line 309 then references "all 6 required files" — fine — but the time budget table at line 326-337 sums to 16.25 hours across 7 rows that don't match the 8 steps in the body. A first-time reader will pause to figure out which numbering is canonical. 30-minute hit, but it screams "didn't proofread."
 
 2. **The guide promises copy-paste rename via `for f in *.template; do mv "$f" "${f%.template}"; done`.**
-   That's POSIX bash. Nemo runs on Windows PowerShell. The README at `verticals/_template/README.md:13` repeats the same shell loop with no Windows alternative. First-time author on Windows will fail at the first command. Trivial fix, but a real bug.
+   That's POSIX bash. Windows authors using PowerShell will hit this. The README at `verticals/_template/README.md:13` repeats the same shell loop with no Windows alternative. First-time author on Windows will fail at the first command. Trivial fix, but a real bug.
 
 3. **The graph.py.template has a hard-coded import that the guide doesn't tell you to fix.**
    `verticals/_template/graph.py.template:19` says `from .state import VerticalState   # rename to your StateClass`. The author has to rename in **both** `graph.py` (line 19) **and** `__init__.py.template` (line 12). The guide's Step 4 only mentions state.py. A first-time author will get an ImportError they can't immediately explain.
@@ -247,7 +247,7 @@ It is **not yet** ready for the SaaS path (Path 2) — production-readiness gaps
 
 2. **EVAL-RESULTS.md numbers are fabricated.** The doc was hand-authored, never run. Fix: actually run `python -m eval.run_eval --vertical education` and commit real output, or label the existing file as "projected" prominently at the top. *(Severity: critical — integrity risk in any interview / investor conversation.)*
 
-3. **CORS wildcard + no auth + no rate limiting + no LLM timeout.** Production blockers per § C, items 1-3, 5. Fix: real CORS, bearer-token auth on all `/api/` routes, `httpx.Timeout(30.0)` on OpenAI client. *(Severity: critical for Path 2/3; not for Nemo's self-use Path 1.)*
+3. **CORS wildcard + no auth + no rate limiting + no LLM timeout.** Production blockers per § C, items 1-3, 5. Fix: real CORS, bearer-token auth on all `/api/` routes, `httpx.Timeout(30.0)` on OpenAI client. *(Severity: critical for Path 2/3; not for the author's self-use Path 1.)*
 
 4. **Streaming in MOCK_MODE emits zero `token` events.** Documented behaviour at `core/api/sse.py:8-10` says 6 event types stream. In mock mode you get 3 (thread, triage, done). Fix: either route mock-mode Resolver text through `MockLLMProvider.stream()` and yield token events from inside `_run_chat`, or document MOCK_MODE as a non-streaming demonstration. *(Severity: high — first impression breaks.)*
 
@@ -279,13 +279,13 @@ It is **not yet** ready for the SaaS path (Path 2) — production-readiness gaps
 | **Replit Agent v2 (open architecture)** | Strong checkpointer + thread persistence to Postgres | This project uses `MemorySaver` only. Acknowledged limitation. |
 | **Sierra.ai** | Per-vertical agent products, strong eval rigour (private) | Strategy matches. Eval rigour does not. |
 
-**Verdict on positioning:** This codebase is competitive with a **senior individual's portfolio project**. It is not yet competitive with a **production agent platform from a funded company**. That's a fine and defensible position for "Nemo's interview project + LeapDigital delivery template" — but the BUSINESS-PLAN's claim of being a defensible SaaS moat is overreach until § C is closed.
+**Verdict on positioning:** This codebase is competitive with a **senior individual's portfolio project**. It is not yet competitive with a **production agent platform from a funded company**. That's a fine and defensible position for "the author's interview project + LeapDigital delivery template" — but the BUSINESS-PLAN's claim of being a defensible SaaS moat is overreach until § C is closed.
 
 **The interview narrative in EXPERIENCE-LOG.md § 10 is good** — it correctly emphasises "real deployment + architectural judgement + acknowledged scope". Stick to that script in the interview; do not oversell.
 
 ---
 
-## Final advice to Nemo
+## Final advice to the author
 
 1. **Spend 1 working day on the 5 quick wins + 5 blockers list above.** That puts this at SHIP for interviews and Path 1 self-use.
 2. **Spend a second day implementing real `/api/resume` + replacing MemorySaver with a Postgres / Upstash checkpointer.** That puts this at SHIP for Path 3 (LeapDigital delivery).
@@ -296,5 +296,5 @@ The platform's bones are good. The flesh needs another day of focused work. Then
 
 ---
 
-*Reviewed by an independent senior LangGraph engineer for Nemo.*
-*No part of this review was generated by the original author (Atlas).*
+*Reviewed by an independent senior LangGraph engineer.*
+*No part of this review was generated by the original v1 author.*

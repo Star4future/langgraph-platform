@@ -1,7 +1,6 @@
 # Business Plan — Multi-Vertical AI Customer Workflow Platform
 
 **Working name:** LangGraph Platform
-**Founder:** Nemo
 **Date:** May 2026
 **Stage:** v1 — Education vertical (AceAchievers as first customer)
 
@@ -100,7 +99,7 @@ Each vertical contains only:
 
 ### Path 1 — Self-use (Highest internal ROI)
 
-**Nemo's project portfolio:**
+**The author's project portfolio:**
 - AceAchievers (education)
 - Held (emotional support app)
 - Sealify (consulting)
@@ -114,7 +113,7 @@ Each vertical contains only:
 
 ### Path 2 — SaaS Product
 
-**Product:** "Atlas Workflow" (placeholder name) — AI workflow agent for AU SMBs
+**Product:** the platform — AI workflow agent for AU SMBs
 
 **Pricing tiers (AUD, incl. GST):**
 
@@ -137,7 +136,7 @@ Each vertical contains only:
 | Childcare centres | Enrolment + fee enquiries | $3,600 |
 
 **Go-to-market:**
-- LinkedIn outreach (Nemo's network in AU SMB space)
+- LinkedIn outreach (the author's network in AU SMB space)
 - AceAchievers public demo as proof
 - LeapDigital as distribution channel
 - Content marketing: "How we built X with LangGraph" technical posts
@@ -163,9 +162,9 @@ Each vertical contains only:
 - Companies who can't justify a full engineering hire
 
 **Sales cycle:** 2-6 weeks
-**Margin:** ~80% (after Nemo's time)
+**Margin:** ~80% (after the author's time)
 
-**Distribution:** LeapDigital owns customer relationships; LangGraph Platform is the underlying product (Nemo's IP).
+**Distribution:** LeapDigital owns customer relationships; LangGraph Platform is the underlying product (the author's IP).
 
 ---
 
@@ -182,7 +181,7 @@ Each vertical contains only:
 **Our defensible moats:**
 1. **Vertical library** — every vertical we build deepens our domain catalogue, raising switching cost for the next customer in the same industry
 2. **AU localisation** — GST, Privacy Act, Fair Work compliance baked in; foreign competitors miss this
-3. **Founder distribution** — Nemo has direct channels to AU SMB owners that overseas competitors can't access
+3. **Founder distribution** — the author has direct channels to AU SMB owners that overseas competitors can't access
 4. **Eval-driven quality** — we ship eval harnesses with every vertical; competitors ship "it works on my demo"
 
 ---
@@ -193,7 +192,7 @@ Each vertical contains only:
 
 | Source | Customers | Avg revenue/yr | Total |
 |--------|-----------|----------------|-------|
-| Self-use (Nemo projects) | 6 | Implicit savings $2,400 | $14,400 implicit value |
+| Self-use (author's projects) | 6 | Implicit savings $2,400 | $14,400 implicit value |
 | SaaS Starter | 15 | $1,188 | $17,820 |
 | SaaS Pro | 8 | $3,588 | $28,704 |
 | White-label (via LeapDigital) | 3 | $25,000 | $75,000 |
@@ -220,7 +219,7 @@ Each vertical contains only:
 | Domain + ops tooling | $500 |
 | Marketing / outreach | $3,000 |
 | **Total OPEX** | **$14,700** |
-| **Net Year 1** | **~$143,000** (excluding Nemo's time) |
+| **Net Year 1** | **~$143,000** (excluding the author's time) |
 
 ---
 
@@ -229,7 +228,7 @@ Each vertical contains only:
 1. **LangGraph reached production maturity** (v0.2 in 2025, used by Klarna, Replit, Uber)
 2. **GPT-4o mini pricing collapsed** — $0.15/1M input tokens makes per-interaction cost negligible
 3. **AU SMB AI adoption gap** — Big consultancies serve enterprise; nobody serves SMB workflow needs
-4. **Nemo has multiple owned projects** — internal testbed before external sales = de-risked learning
+4. **The author has multiple owned projects** — internal testbed before external sales = de-risked learning
 5. **Job market validation** — Latitude IT, NobleOak, Temple & Webster all hiring for "agent workflow" roles, confirming demand
 
 ---
@@ -263,7 +262,7 @@ Each vertical contains only:
 
 ## 10. Founder Positioning
 
-This platform turns Nemo into:
+This platform turns the author into:
 1. **A founder** of a real B2B SaaS company
 2. **A consultant** with a productised offering (5-10× margin vs hourly consulting)
 3. **An employable AI engineer** with production deployment evidence at AceAchievers + multiple vertical case studies
@@ -272,4 +271,4 @@ The same engineering hours fund all three trajectories. The optimal play is to k
 
 ---
 
-*Document version: 1.0 · Author: Nemo (Atlas-supported) · Status: Live*
+*Document version: 1.0 · Author: @Star4future · Status: Live*

@@ -2,7 +2,7 @@
 
 > How to ship a new industry vertical in 2 working days.
 
-**Audience:** Future Nemo, future contractor, future paying customer.
+**Audience:** Future maintainer, future contractor, future paying customer.
 **Prerequisite:** Python 3.12, basic comfort with `pip install`, ability to read YAML and Markdown.
 **You do NOT need:** Deep LangGraph knowledge. The framework is hidden behind our base classes.
 

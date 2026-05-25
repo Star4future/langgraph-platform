@@ -1,11 +1,11 @@
 # Experience Log — Building the LangGraph Platform v1 from 0 to 1
 
 > **Purpose:** Concrete record of how this platform was built so it can be
-> reproduced, sold as a methodology, or used as Nemo's interview narrative.
+> reproduced, sold as a methodology, or used as the author's interview narrative.
 > Read this before authoring v2 or replicating in another industry.
 
 **Built:** May 2026
-**Builders:** Nemo (CEO) + Atlas (Opus 4.7 包工头) + Niuma (Sonnet 4.6 implementation)
+**Builders:** @Star4future
 **Duration:** Single-session build, ~6 hours focused work
 **Lines of code:** ~3,500 (core + verticals + tests + eval)
 **Lines of docs:** ~2,800
@@ -14,14 +14,14 @@
 
 ## 1. The Business Brief That Started It
 
-Nemo had two questions:
+The author had two questions:
 1. Is LangGraph in the AceAchievers education product "大材小用" (over-engineered)?
 2. If we build it, can it be ported to other industries / packaged / sold?
 
 The strategic insight: **separate the engine from the domain**. Build once, sell N times.
 
 Three monetisation paths defined upfront:
-- **Path 1:** Self-use across Nemo's 6 owned websites
+- **Path 1:** Self-use across the author's 6 owned websites
 - **Path 2:** SaaS product for AU SMBs ($99-799/mo tiers)
 - **Path 3:** White-label / custom build via LeapDigital ($15-30k per deal)
 
@@ -133,13 +133,13 @@ The vercel.json **does NOT specify `"runtime": "python3.11"`**. That string is i
 - ⚠️ Only 1 vertical authored (education); the "2-day claim" is unvalidated until vertical #2 is done
 
 ### Validating the 2-day claim — the next critical experiment
-Build `verticals/insurance/` (NobleOak demo) using only `VERTICAL-AUTHORING-GUIDE.md` and `verticals/_template/` — no Atlas/Nemo intervention beyond the guide. If it takes > 3 days, the guide needs more clarity. This is the **single most important next step** for the business case.
+Build `verticals/insurance/` (NobleOak demo) using only `VERTICAL-AUTHORING-GUIDE.md` and `verticals/_template/` — no author intervention beyond the guide. If it takes > 3 days, the guide needs more clarity. This is the **single most important next step** for the business case.
 
 ---
 
 ## 7. How to Replicate This in 6 Hours
 
-If a future Nemo / customer wants to build a similar platform from scratch:
+If a future author / customer wants to build a similar platform from scratch:
 
 1. **Hour 0-1:** Write business plan + architecture doc. Force decisions BEFORE code.
 2. **Hour 1-2:** Skeleton directories + base state + LLM adapter Protocol.
@@ -176,8 +176,8 @@ These patterns transfer to ANY multi-agent system, not just customer service:
 The platform is now:
 - A **production deployable** for AceAchievers (path 1)
 - A **reference architecture** for 2-day vertical authoring (path 2)
-- A **portfolio asset** demonstrating multi-vertical engineering judgement (Nemo's job applications)
-- An **IP foundation** for the SaaS Atlas Workflow product (path 3)
+- A **portfolio asset** demonstrating multi-vertical engineering judgement (the author's job applications)
+- An **IP foundation** for the SaaS platform product (path 3)
 - A **delivery template** for LeapDigital's custom AI workflow projects
 
 Same engineering hours fund all five outcomes.

@@ -249,7 +249,7 @@ POST /api/eval
 ### 8.1 Why verticals are directories not classes
 
 Considered: a `Vertical` Python base class with subclasses (`EducationVertical(Vertical)`).
-**Rejected.** Reason: that forces vertical authors to know Python class inheritance. Our target authors are 1) Nemo for his own projects (Python literate) 2) future LangGraph platform customers (may not be coders).
+**Rejected.** Reason: that forces vertical authors to know Python class inheritance. Target authors are 1) internal developers (Python literate) 2) future platform customers (may not be coders).
 
 Directory-of-files approach means a vertical is **declarative artifacts** (YAML config, markdown FAQ, JSON mock data) + thin Python adapters. A non-coder can copy `_template/`, edit `config.yaml`, and have a working vertical.
 
@@ -327,10 +327,10 @@ The same platform code serves multiple deploys via different vertical selections
 ## 12. References
 
 - LangGraph docs: https://langchain-ai.github.io/langgraph/
-- AceAchievers Portfolio B (precursor): `C:\AI_workspace\claudecode folder\aceachievers\`
-- Original brief: `C:\AI_workspace\claudecode folder\job-system\learning\langgraph_project_brief.md`
-- ADR-001 (retrieval stack): `aceachievers/portfolio/articles/ADR-001-retrieval-stack.md`
+- LangGraph: https://langchain-ai.github.io/langgraph/
+- FastAPI: https://fastapi.tiangolo.com/
+- Vercel Python runtime: https://vercel.com/docs/functions/runtimes/python
 
 ---
 
-*v1.0 — May 2026 — Authored by Atlas (Opus 4.7) for Nemo*
+*v1.0 — May 2026*

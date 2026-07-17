@@ -59,25 +59,23 @@ def build_support_graph(
     graph.set_entry_point("triage")
 
     # ── Conditional routing ─────────────────────────────────────────
-    def route_after_triage(state: dict) -> str:
-        if state.get("requires_human", False):
-            return "human_escalation"
-        if state.get("confidence", 1.0) < confidence_floor:
-            return "human_escalation"
-        return "resolver"
-
+    # Human-flagged and low-confidence requests still flow through
+    # Resolver + Supervisor first, so the human reviewer receives a
+    # quality-scored draft rather than a bare transcript. The escalation
+    # decision is applied after scoring.
     def route_after_supervisor(state: dict) -> str:
+        if (
+            state.get("requires_human", False)
+            or state.get("confidence", 1.0) < confidence_floor
+        ):
+            return "human_escalation"
         if state.get("quality_score", 0.0) >= quality_threshold:
             return "END"
         if state.get("retry_count", 0) >= max_retries:
             return "human_escalation"
         return "resolver"
 
-    graph.add_conditional_edges(
-        "triage",
-        route_after_triage,
-        {"resolver": "resolver", "human_escalation": "human_escalation"},
-    )
+    graph.add_edge("triage", "resolver")
     graph.add_edge("resolver", "supervisor")
     graph.add_conditional_edges(
         "supervisor",

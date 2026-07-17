@@ -19,6 +19,7 @@ from __future__ import annotations
 import logging
 import os
 import time
+from pathlib import Path
 from typing import AsyncGenerator
 
 from fastapi import FastAPI, HTTPException, Request
@@ -193,16 +194,28 @@ def create_app(*, default_vertical: str | None = None) -> FastAPI:
     # ── /api/eval ───────────────────────────────────────────────────
     @app.post("/api/eval", tags=["evaluation"])
     async def eval_endpoint(req: EvalRequest) -> dict:
+        # Security: only datasets shipped under eval/datasets/ may be run.
+        # Accepting arbitrary paths here would let a caller point the JSONL
+        # parser at any file on disk (and leak its content via the error).
+        if req.dataset is not None:
+            from eval.run_eval import ROOT as _EVAL_ROOT
+            datasets_dir = (_EVAL_ROOT / "eval" / "datasets").resolve()
+            candidate = (datasets_dir / Path(req.dataset).name).resolve()
+            if candidate.parent != datasets_dir or not candidate.exists():
+                raise HTTPException(status_code=400, detail="Unknown dataset")
+            dataset_path = str(candidate)
+        else:
+            dataset_path = None
         try:
             from eval.run_eval import run_evaluation
             metrics = await run_evaluation(
                 vertical_name=req.vertical,
-                dataset_path=req.dataset,
+                dataset_path=dataset_path,
             )
             return {"status": "ok", "metrics": metrics}
         except Exception as exc:  # noqa: BLE001
             logger.exception("Eval failed")
-            raise HTTPException(status_code=500, detail=f"Eval error: {exc}") from exc
+            raise HTTPException(status_code=500, detail="Eval run failed; see server logs") from exc
 
     # ── global exception handler ────────────────────────────────────
     @app.exception_handler(Exception)
@@ -293,19 +306,24 @@ async def _run_chat(
                             yield token_event(chunk)
                             token_count += 1
 
-            # Human escalation triggered
-            elif ev_type == "on_chain_start" and event.get("name") == "human_escalation":
-                _PENDING_HUMAN[req.session_id] = {
-                    "customer_id": req.customer_id,
-                    "vertical_name": vertical_name,
-                    "intent": event.get("data", {}).get("input", {}).get("intent", "unknown"),
-                    "awaiting_since": time.strftime("%Y-%m-%d %H:%M:%S"),
-                    "summary": req.message[:200],
-                }
-                yield sse_event("human_escalation", {
-                    "session_id": req.session_id,
-                    "reason": "policy_triggered",
-                })
+        # Human escalation: `interrupt_before=["human_escalation"]` pauses the
+        # graph *before* that node starts, so no node event ever fires for it.
+        # Detect the pause from the checkpoint snapshot instead.
+        snapshot = await graph.aget_state(graph_config)
+        if snapshot.next and "human_escalation" in snapshot.next:
+            values = snapshot.values or {}
+            _PENDING_HUMAN[req.session_id] = {
+                "customer_id": req.customer_id,
+                "vertical_name": vertical_name,
+                "intent": values.get("intent", "unknown"),
+                "awaiting_since": time.strftime("%Y-%m-%d %H:%M:%S"),
+                "summary": req.message[:200],
+            }
+            yield sse_event("human_escalation", {
+                "session_id": req.session_id,
+                "reason": "policy_triggered",
+                "draft_quality": values.get("quality_score", 0.0),
+            })
 
         latency_ms = int((time.time() - t_start) * 1000)
         yield done_event(latency_ms=latency_ms, tokens=token_count, mode=mode)

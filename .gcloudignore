@@ -1,0 +1,15 @@
+# Uploaded to Cloud Build for `gcloud run deploy --source .`
+# Keep secrets and local-only files out of the build context.
+.git
+.vercel
+.claude
+.pytest_cache
+__pycache__
+*.pyc
+.env
+*.local.md
+artifacts/
+tests/
+docs/
+scripts/
+deploy/

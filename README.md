@@ -1,9 +1,15 @@
 # LangGraph Multi-Vertical Customer Workflow Platform
 
-> Production-ready multi-agent AI customer workflows with industry-pluggable verticals.
+> Production-patterned multi-agent AI customer workflows with industry-pluggable verticals.
 > Built on **LangGraph** + **FastAPI** + **OpenAI** · Deployed on **Vercel**
 >
 > 🌐 **Live demo:** [langgraph-platform-demo.vercel.app](https://langgraph-platform-demo.vercel.app)
+
+**Reviewing this repo? 10-minute tour:**
+1. *(1 min)* Click the [live demo](https://langgraph-platform-demo.vercel.app) and fire an example question — watch the SSE events stream (`triage → tool_call → token → done`).
+2. *(3 min)* Read [`tests/test_layering.py`](tests/test_layering.py) — an AST-based CI test that fails the build if any industry vocabulary leaks into `core/`. It's the architectural guarantee behind the multi-vertical claim.
+3. *(3 min)* Skim [`EXPERT-REVIEW.md`](EXPERT-REVIEW.md) — an adversarial review I commissioned against my own v1 (5 blockers, 10 quick wins) and its resolution log.
+4. *(3 min)* Run it yourself: `MOCK_MODE` needs no API key — see [Quick Start](#quick-start-60-seconds), then `python -m eval.run_eval --vertical education` to reproduce [`eval/EVAL-RESULTS.md`](eval/EVAL-RESULTS.md).
 
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)]()
 [![LangGraph](https://img.shields.io/badge/LangGraph-0.2-1C3C3C)]()
@@ -117,16 +123,22 @@ See `ARCHITECTURE.md` for full diagrams and design decisions.
 
 ## Performance & Eval
 
-Latest education vertical eval run (`eval/EVAL-RESULTS.md`):
+Latest education vertical eval run — 30 scenarios, MOCK_MODE, reproducible with
+`python -m eval.run_eval --vertical education` (full report: [`eval/EVAL-RESULTS.md`](eval/EVAL-RESULTS.md)):
 
 | Metric | Value | Threshold | Status |
 |--------|-------|-----------|--------|
-| Resolution rate | 73% | ≥ 70% | ✓ |
-| Intent accuracy | 90% | ≥ 85% | ✓ |
-| Human-escalation precision | 95% | ≥ 90% | ✓ |
-| Avg quality score | 0.78 | ≥ 0.70 | ✓ |
-| Avg retry count | 0.27 | ≤ 0.5 | ✓ |
-| P50 latency | 2.3s | ≤ 3s | ✓ |
+| Resolution rate | 100% | ≥ 70% | ✓ |
+| Intent accuracy | 100% | ≥ 85% | ✓ |
+| Tool choice accuracy | 90% | ≥ 80% | ✓ |
+| Human-escalation precision | 97% | ≥ 90% | ✓ |
+| Avg quality score | 0.82 | ≥ 0.70 | ✓ |
+| P50 latency (mock) | 194 ms | ≤ 3s | ✓ |
+
+> These are **deterministic mock-mode numbers**: they verify the pipeline — routing,
+> tool dispatch, escalation, retries, judge — against a fixed scenario set, the same
+> way the CI gate does. They are not a claim about live-LLM answer quality; that
+> benchmark (`MOCK_MODE=false`) is tracked separately.
 
 ---
 

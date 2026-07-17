@@ -129,12 +129,22 @@ def _write_report(vertical_name: str, metrics: dict, results: list[dict], datase
 
 def _format_report(vertical_name: str, metrics: dict, results: list[dict], dataset_path: str) -> str:
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        dataset_display = str(Path(dataset_path).relative_to(ROOT)).replace("\\", "/")
+    except ValueError:
+        dataset_display = Path(dataset_path).name
     lines = [
         f"# Eval Results — `{vertical_name}` vertical",
         "",
-        f"**Dataset:** `{dataset_path}` ({metrics['total_scenarios']} scenarios)",
+        f"**Dataset:** `{dataset_display}` ({metrics['total_scenarios']} scenarios)",
         f"**Mode:** MOCK_MODE (deterministic, no LLM cost)",
         f"**Run at:** {ts}",
+        "",
+        "> **What mock-mode numbers measure:** the LLM is replaced by a deterministic",
+        "> keyword-matched mock, so these metrics exercise the *pipeline* — graph routing,",
+        "> tool dispatch, escalation logic, retry loop and the judge — not model quality.",
+        "> A live-LLM run (`MOCK_MODE=false`) is the follow-up benchmark; expect lower,",
+        "> noisier numbers there.",
         "",
         "## Summary metrics",
         "",

@@ -1,4 +1,4 @@
-# Independent Expert Review — LangGraph Multi-Vertical Platform
+﻿# Independent Expert Review — LangGraph Multi-Vertical Platform
 
 **Reviewer:** Senior LangGraph engineer (independent second opinion)
 **Reviewed:** 2026-05-25
@@ -22,6 +22,7 @@ Every finding below is preserved exactly as written. Status of the headline item
 | B5 | Assistant reply never appended to `messages` | ✅ Resolved — Supervisor appends the approved draft, multi-turn retains context | `core/agents/supervisor_base.py` |
 | QW1-5 | Timeout / CORS / guide numbering / mock schema docs / judge tightening | ✅ All five landed — the tightened judge (no escalation auto-pass) exposed that escalated requests carried no scored draft, which led to the flow redesign below | see files above + `VERTICAL-AUTHORING-GUIDE.md`, `eval/metrics.py` |
 | — | Follow-up redesign (2026-07-17): human-flagged requests now flow through Resolver + Supervisor first, so a human reviewer receives a quality-scored draft instead of a bare transcript; mock scenario coverage extended to the full 30-scenario eval set | ✅ Shipped | `core/graph_builder.py`, `verticals/education/data/mock_responses.json` |
+| — | Follow-up (2026-07-17): durable HITL — `CHECKPOINT_DATABASE_URL` switches the checkpointer to Postgres (graceful fallback to in-memory keeps a dead checkpointer from becoming a dead API); addresses the MemorySaver findings in § A.2 / § C.4 | ✅ Shipped | `core/checkpointing.py`, `tests/test_checkpointing.py` |
 
 ---
 
@@ -291,7 +292,7 @@ It is **not yet** ready for any multi-tenant or third-party-embed deployment —
 1. **Spend 1 working day on the 5 quick wins + 5 blockers list above.** That puts this at SHIP for portfolio / interview use.
 2. **Spend a second day implementing real `/api/resume` + replacing `MemorySaver` with a Postgres / Upstash checkpointer.** That closes the HITL production gap.
 3. **Defer any multi-tenant / internet-facing claims until the eval rigour and rate-limiting/auth gaps in § C are properly closed.** That's a week of work, not a day.
-4. **Do build the insurance vertical.** It will validate (or invalidate) the 2-day claim, and that data point is worth more in an interview than another polish pass on the docs.
+4. **Do build a second vertical.** It will validate (or invalidate) the 2-day claim, and that data point is worth more in an interview than another polish pass on the docs.
 
 The platform's bones are good. The flesh needs another day of focused work. Then it ships.
 

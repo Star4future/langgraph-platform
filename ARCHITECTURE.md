@@ -1,4 +1,4 @@
-# Architecture — LangGraph Multi-Vertical Customer Workflow Platform
+﻿# Architecture — LangGraph Multi-Vertical Customer Workflow Platform
 
 **Audience:** Senior engineers, technical interviewers, vertical authors, integration partners
 **Reading time:** 15 minutes
@@ -304,7 +304,7 @@ graph LR
     Repo[GitHub Repo] --> CI{CI: tests + eval}
     CI -->|pass| Vercel[Vercel Build]
     Vercel --> Prod1[acmeacademy.com.au<br/>education vertical]
-    Vercel --> Prod2[insurance-demo.vercel.app<br/>insurance vertical]
+    Vercel --> Prod2[second-vertical demo<br/>same engine, different artifacts]
     Vercel --> Prod3[customer-x.com<br/>education vertical<br/>custom config]
 ```
 
@@ -336,7 +336,7 @@ The same platform code serves multiple deploys via different vertical selections
 | Version | Engine feature | Verticals |
 |---------|---------------|-----------|
 | v1.0 (now) | Single graph per vertical, single LLM | Education |
-| v1.1 | Multi-LLM routing (cheap for Triage, premium for Resolver) | Insurance demo |
+| v1.1 | Multi-LLM routing (cheap for Triage, premium for Resolver) | Second-vertical demo |
 | v1.2 | Long-term memory (Redis-backed) | E-commerce |
 | v1.3 | Customer-portal vertical authoring UI | Real-estate |
 | v2.0 | Multi-tenant hosting + per-tenant isolation | Allied health, fitness |

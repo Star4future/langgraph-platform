@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      MOCK_MODE: "true"
+      VERTICAL: education
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Unit + integration tests (includes the AST layering gate)
+        run: pytest tests/ -q
+
+      - name: Eval gate — resolution rate must clear 0.70
+        run: python -m eval.run_eval --vertical education

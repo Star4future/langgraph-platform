@@ -1,4 +1,4 @@
-# LangGraph Multi-Vertical Customer Workflow Platform
+﻿# LangGraph Multi-Vertical Customer Workflow Platform
 
 > Production-patterned multi-agent AI customer workflows with industry-pluggable verticals.
 > Built on **LangGraph** + **FastAPI** + **OpenAI** · Deployed on **Vercel**
@@ -11,6 +11,7 @@
 3. *(3 min)* Skim [`EXPERT-REVIEW.md`](EXPERT-REVIEW.md) — an adversarial review I commissioned against my own v1 (5 blockers, 10 quick wins) and its resolution log.
 4. *(3 min)* Run it yourself: `MOCK_MODE` needs no API key — see [Quick Start](#quick-start-60-seconds), then `python -m eval.run_eval --vertical education` to reproduce [`eval/EVAL-RESULTS.md`](eval/EVAL-RESULTS.md).
 
+[![CI](https://github.com/Star4future/langgraph-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Star4future/langgraph-platform/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)]()
 [![LangGraph](https://img.shields.io/badge/LangGraph-0.2-1C3C3C)]()
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)]()
@@ -114,8 +115,9 @@ See `ARCHITECTURE.md` for full diagrams and design decisions.
 ✅ SSE streaming widget
 ✅ Vertical authoring guide
 ✅ Full unit + integration tests
+✅ Durable HITL — set `CHECKPOINT_DATABASE_URL` to back the checkpointer with Postgres so paused escalations survive restarts (demos fall back to in-memory)
 
-🔜 v1.1 — Insurance vertical (validation that 2-day vertical authoring claim is real)
+🔜 v1.1 — Second reference vertical (validation that the 2-day vertical-authoring claim is real)
 🔜 v1.2 — Multi-LLM routing (cheap Triage, premium Resolver)
 🔜 v1.3 — Long-term memory (Redis)
 

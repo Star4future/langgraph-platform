@@ -13,6 +13,7 @@ from typing import Any
 import yaml
 
 from core.agents import ResolverAgent, SupervisorAgent, TriageAgent, collect_tools_from_module
+from core.checkpointing import build_checkpointer
 from core.graph_builder import build_support_graph
 from core.llm import get_llm_provider
 
@@ -98,6 +99,7 @@ def build_graph():
         quality_threshold=quality_threshold,
         max_retries=max_retries,
         confidence_floor=confidence_floor,
+        checkpointer=build_checkpointer(),
     )
 
 

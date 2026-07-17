@@ -52,3 +52,6 @@ artifacts/*/verdict-v*.md
 
 # Internal strategy / commercial planning — kept locally, not pushed
 *.local.md
+
+# eval run artifacts (reports are committed, raw run JSON is not)
+eval/results/

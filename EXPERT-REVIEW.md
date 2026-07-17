@@ -1,4 +1,4 @@
-﻿# Independent Expert Review — LangGraph Multi-Vertical Platform
+# Independent Expert Review — LangGraph Multi-Vertical Platform
 
 **Reviewer:** Senior LangGraph engineer (independent second opinion)
 **Reviewed:** 2026-05-25
@@ -9,7 +9,12 @@
 
 ---
 
---------|--------|-------|
+## Resolution Log (maintained by the author after the review)
+
+Every finding below is preserved exactly as written. Status of the headline items:
+
+| # | Finding | Status | Where |
+|---|---------|--------|-------|
 | B1 | `/api/resume` was a stub | ✅ Resolved — real `graph.update_state` + `ainvoke(None, config)` resume; pending-escalation detection reads the checkpoint snapshot (interrupts never fire node events) | `core/api/main.py` |
 | B2 | EVAL-RESULTS.md numbers were hand-authored | ✅ Resolved — harness now runs for real (`python -m eval.run_eval --vertical education`); report is generated output, labelled as a deterministic mock-mode baseline | `eval/EVAL-RESULTS.md`, `README.md` |
 | B3 | CORS wildcard, no auth, no rate limiting, no LLM timeout | 🟡 Partially resolved — CORS env allow-list + 30s OpenAI timeout + `/api/eval` dataset whitelist shipped; bearer-token auth and rate limiting remain open items for any internet-facing real-mode deploy (the public demo runs MOCK_MODE) | `core/api/main.py`, `core/llm/openai_client.py` |

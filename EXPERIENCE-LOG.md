@@ -116,7 +116,7 @@ The `vercel.json` **does NOT specify `"runtime": "python3.11"`**. That string is
 ### Doesn't (acknowledged limitations)
 - ⚠️ Per-process `MemorySaver` — multi-instance Vercel can lose paused sessions
 - ⚠️ Tools are all-mock — no real Stripe/DB integration in v1
-- ⚠️ Eval was constructed (not run live) — figures in EVAL-RESULTS.md are projected/illustrative; running `python -m eval.run_eval` is the source of truth
+- ~~⚠️ Eval was constructed (not run live) — figures in EVAL-RESULTS.md were projected/illustrative~~ **Resolved 2026-07-17:** the harness now runs for real and EVAL-RESULTS.md is generated output (deterministic mock-mode baseline); `python -m eval.run_eval --vertical education` reproduces it
 - ⚠️ Frontend widget is single-language English
 - ⚠️ No long-term memory across sessions (each session_id starts fresh)
 - ⚠️ Only 1 vertical authored (education); the "2-day claim" is unvalidated until vertical #2 is done

@@ -284,7 +284,7 @@ You'll need: policy number, date of incident, brief description.
 
 | Field | Required | Used by | Notes |
 |-------|----------|---------|-------|
-| `keywords` | ✓ | All | Match triggers (OR logic, case-insensitive). Last-match-wins within a stage. |
+| `keywords` | ✓ | All | Match triggers (OR logic, case-insensitive). First match wins within a stage; the final entry is the catch-all fallback. |
 | `stage` | recommended | All | `"triage"`, `"resolver"`, `"supervisor"`, or `"any"` (default). One scenario can serve multiple stages by using `"any"`. |
 | `intent` | triage only | Triage | Output intent string. |
 | `confidence` | triage only | Triage | 0..1, default 0.7. |

@@ -1,11 +1,27 @@
 [
   {
+    "keywords": ["all my money back", "past 6 months", "every cent"],
+    "stage": "triage",
+    "intent": "refund_request",
+    "confidence": 0.85,
+    "urgency": "high",
+    "requires_human": true
+  },
+  {
     "keywords": ["refund", "money back", "cancel"],
     "stage": "triage",
     "intent": "refund_request",
     "confidence": 0.92,
     "urgency": "medium",
     "requires_human": false
+  },
+  {
+    "keywords": ["pause", "on hold", "put my subscription on hold"],
+    "stage": "triage",
+    "intent": "plan_change",
+    "confidence": 0.87,
+    "urgency": "medium",
+    "requires_human": true
   },
   {
     "keywords": ["switch", "change plan", "from m3 to m4", "from m4 to m3", "upgrade", "downgrade"],
@@ -16,7 +32,7 @@
     "requires_human": false
   },
   {
-    "keywords": ["family", "second child", "sibling", "two children", "third child"],
+    "keywords": ["family", "second child", "sibling", "two children", "third child", "both my children", "same login", "child account"],
     "stage": "triage",
     "intent": "family_setup",
     "confidence": 0.88,
@@ -32,7 +48,15 @@
     "requires_human": false
   },
   {
-    "keywords": ["struggling", "worried", "behind", "not improving", "demotivated"],
+    "keywords": ["can't log in", "cant log in", "password reset", "charged twice", "payment failed", "not loading", "error message", "keeps crashing"],
+    "stage": "triage",
+    "intent": "technical_issue",
+    "confidence": 0.89,
+    "urgency": "high",
+    "requires_human": true
+  },
+  {
+    "keywords": ["struggling", "worried", "behind", "not improving", "demotivated", "frustrated", "hasn't logged in"],
     "stage": "triage",
     "intent": "progress_concern",
     "confidence": 0.86,
@@ -48,7 +72,7 @@
     "requires_human": true
   },
   {
-    "keywords": ["price", "how much", "cost", "fee", "monthly"],
+    "keywords": ["price", "how much", "cost", "fee", "monthly", "free tier", "cheapest"],
     "stage": "triage",
     "intent": "pricing_question",
     "confidence": 0.93,
@@ -56,7 +80,15 @@
     "requires_human": false
   },
   {
-    "keywords": ["amc", "aimo", "difference", "what is"],
+    "keywords": ["acmeacademy", "who are you", "about your platform"],
+    "stage": "triage",
+    "intent": "general",
+    "confidence": 0.90,
+    "urgency": "low",
+    "requires_human": false
+  },
+  {
+    "keywords": ["amc", "aimo", "difference", "what is", "science olympiad", "suitable", "m5"],
     "stage": "triage",
     "intent": "course_question",
     "confidence": 0.90,
@@ -64,6 +96,16 @@
     "requires_human": false
   },
 
+  {
+    "keywords": ["all my money back", "past 6 months", "every cent"],
+    "stage": "resolver",
+    "tool_calls": [
+      {"name": "lookup_subscription", "arguments": {"user_email": "sarah.chen@example.com.au"}},
+      {"name": "check_refund_eligibility", "arguments": {"subscription_id": "SUB-2001", "reason": "full_refund_demand"}},
+      {"name": "calculate_prorated_refund", "arguments": {"subscription_id": "SUB-2001"}}
+    ],
+    "response": "I understand you'd like a full refund for the past 6 months, and I want to make sure this is handled properly.\n\nI've pulled up your account and checked eligibility: our standard money-back guarantee covers the first 14 days, so a 6-month retrospective refund falls outside what I can approve automatically. The maximum prorated amount our policy supports is the unused portion of the current billing cycle.\n\nBecause this is a significant request, I've escalated it to our customer service team with your account details and the eligibility calculation attached — a real person will review the full history and reach out within 1 business day. If there's context that might support an exception (e.g. a service problem on our side), reply here and I'll add it to the ticket.\n\n*All amounts AUD including GST.*"
+  },
   {
     "keywords": ["refund", "money back", "cancel"],
     "stage": "resolver",
@@ -74,6 +116,14 @@
     "response": "I've checked your account, Sarah. Your AMC Monthly subscription (SUB-2001) is past the 14-day window for the money-back guarantee, but you can **cancel anytime** with no fees — your access will continue until the end of the current billing cycle (1 June 2026).\n\nIf there's a specific reason it's not working for Emily, I'd love to flag it for our education team — sometimes switching modules (e.g. M3 AMC → M1 Writing) is a better fit. Let me know.\n\n*All amounts AUD including GST.*"
   },
   {
+    "keywords": ["pause", "on hold"],
+    "stage": "resolver",
+    "tool_calls": [
+      {"name": "lookup_subscription", "arguments": {"user_email": "sarah.chen@example.com.au"}}
+    ],
+    "response": "Thanks for the heads-up about your holiday! I've looked up your subscription. A **3-month pause** isn't something I can apply automatically yet — pauses longer than one billing cycle need a quick confirmation from our customer team (they'll also make sure your progress and streaks are preserved).\n\nI've flagged your request with the dates you mentioned; you'll get a confirmation email within 1 business day. If you'd rather switch to a cheaper plan for the break instead of pausing, just say the word."
+  },
+  {
     "keywords": ["switch", "change plan", "from m3 to m4"],
     "stage": "resolver",
     "tool_calls": [
@@ -81,6 +131,11 @@
       {"name": "switch_plan", "arguments": {"parent_id": "PAR-1001", "from_plan": "M3", "to_plan": "M4"}}
     ],
     "response": "Happy to switch you from **M3 AMC** to **M4 AIMO**, Sarah.\n\n- **Price differential:** $0/month (both plans are $69/month, AUD including GST)\n- **Effective:** Next billing cycle (1 June 2026)\n- **Progress:** Your existing M3 progress will be carried over to M4\n- **Confirmation ID:** SWITCH-PAR-1001\n\nA confirmation email is on its way. If Emily hasn't done AMC competitions before, M4 AIMO is significantly more demanding (proof-based) — let me know if you'd like guidance on whether to start M4 fresh or revisit M3 first."
+  },
+  {
+    "keywords": ["same login", "both my children", "child account"],
+    "stage": "resolver",
+    "response": "Great question — **each child gets their own profile**, but they sit under one parent account with a single login for you.\n\n- **Why separate profiles:** progress tracking, streaks and difficulty adaptation are per-child, so sharing one profile would scramble both children's data\n- **How it works:** you log in once as the parent, then each child selects their own profile (no separate passwords needed for younger kids)\n- **Cost:** adding a second child triggers the **Family Plan discount** — 50% off the youngest child's subscription\n\nWant me to set up a second profile now? I just need the child's first name and year level."
   },
   {
     "keywords": ["family", "second child", "sibling"],
@@ -97,7 +152,20 @@
     "response": "For schools and institutions we offer the **School Plan**:\n\n- **$999/year** for up to 30 students (M3 AMC, M4 AIMO, or M5 Science Olympiad)\n- Teacher dashboard + cohort analytics + bulk student roster\n- Invoice with ABN provided for your finance office\n- GST receipt for school accounting\n\nTo get started, please email **schools@acmeacademy.com.au** with your school name, year levels, number of students, and PO number (if applicable). We'll send a formal invoice within 1 business day."
   },
   {
-    "keywords": ["struggling", "worried", "behind"],
+    "keywords": ["charged twice", "payment failed"],
+    "stage": "resolver",
+    "tool_calls": [
+      {"name": "lookup_subscription", "arguments": {"user_email": "sarah.chen@example.com.au"}}
+    ],
+    "response": "That's definitely not right — thank you for flagging it, and I'm sorry for the hassle.\n\nI've pulled up your subscription and I can see the failed attempt followed by two captured charges on the same day. I've escalated this to our billing team as a **priority duplicate-charge investigation** (ticket TKT-4102). Here's what happens next:\n\n- Billing will verify the duplicate with the payment processor within 1 business day\n- The duplicate charge will be reversed to your original payment method (typically 3-5 business days to appear)\n- You'll get an email confirmation at each step\n\nYour subscription and your child's access are unaffected in the meantime."
+  },
+  {
+    "keywords": ["can't log in", "cant log in", "password reset"],
+    "stage": "resolver",
+    "response": "Sorry about the login trouble — let's get you back in.\n\nThe missing password-reset email is usually one of these:\n1. **Spam/junk folder** — search for \"acmeacademy\" (our most common culprit)\n2. **Typo in the account email** — resets go to the address on file, not the one you type\n3. **School or work email filters** — corporate filters sometimes quarantine automated mail\n\nBecause the email hasn't arrived after multiple attempts, I've also raised a ticket (TKT-4090) with our support team to check your account's email delivery log and, if needed, reset your access manually — you'll hear back within a few hours. If you have an alternate email you'd like the reset sent to, reply here and the team will verify and update it."
+  },
+  {
+    "keywords": ["struggling", "worried", "behind", "frustrated", "hasn't logged in", "demotivated"],
     "stage": "resolver",
     "tool_calls": [
       {"name": "escalate_to_teacher", "arguments": {"student_id": "STU-3001", "concern": "Parent reports struggling"}}
@@ -105,14 +173,19 @@
     "response": "Thanks for letting me know — concerns about your child's progress are something I want our education team to look at directly, not just the AI.\n\nI've flagged this for review by our teachers (ticket TKT-3001). Someone from **education_team@acmeacademy.com.au** will review Emily's progress data and reach out within 24 hours with specific recommendations.\n\nIn the meantime, if there's anything specific you'd like them to focus on (a particular topic, motivation, exam preparation), reply to that email so they have full context."
   },
   {
-    "keywords": ["price", "how much", "cost"],
+    "keywords": ["price", "how much", "cost", "free tier", "cheapest"],
     "stage": "resolver",
     "response": "Here's a quick pricing summary (all AUD, GST included):\n\n| Module | Monthly | Annual |\n|---|---|---|\n| M1 Scholarship Writing | $79 | — |\n| M3 AMC Maths | $69 | $590 |\n| M4 AIMO | $69 | $590 |\n| M5 Science Olympiad | $69 | $590 |\n| M2 John Locke Mentored | — | from $1,500/submission |\n\n**Best value:** Annual saves ~30% vs monthly. **Family Plan:** 2nd child 50% off, 3rd child free on annual. **Bundle:** Writing + Olympiad $130/month.\n\nEvery module has a **free tier** (no credit card needed) — start at https://acmeacademy.com.au."
   },
   {
-    "keywords": ["amc", "aimo", "difference"],
+    "keywords": ["science olympiad", "suitable", "m5"],
     "stage": "resolver",
-    "response": "Great question — here's the key difference:\n\n- **AMC (M3):** Multiple-choice · Year 6-12 · tests breadth and speed. Australia's largest maths competition, held annually.\n- **AIMO (M4):** Written full solutions · Year 9-12 · proof-based, significantly more demanding. Think of AIMO as the next tier after AMC.\n\n**Recommendation:**\n- If your child hasn't done AMC before, **start with M3** ($69/month) — much shorter learning curve\n- If they've achieved an AMC **Merit or above**, M4 AIMO is an excellent next step\n- From Year 9, many families run both M3 and M4 simultaneously"
+    "response": "Short answer: **yes, with one caveat.**\n\n**M5 Science Olympiad** is designed for Years 7–10, so a Year 7 student is right at the entry point of the band. What matters more than year level:\n\n- **Comfort with written reasoning** — Olympiad questions ask *why*, not just *what*\n- **Science curiosity beyond the classroom** — the first module assumes interest, not prior competition experience\n- **Reading level** — question stems are wordier than school science tests\n\n**My suggestion:** start with the **free tier** (the first diagnostic + two lessons cost nothing) — if your child scores 60%+ on the diagnostic, M5 will stretch them the right amount. If it feels heavy, M3 AMC Maths builds the problem-solving muscle first and many families start there in Year 7."
+  },
+  {
+    "keywords": ["acmeacademy", "who are you"],
+    "stage": "resolver",
+    "response": "**AcmeAcademy** is an online learning platform for competition preparation — structured, self-paced courses for students in Years 5–12.\n\n- **What we cover:** competition maths (AMC, AIMO), science olympiads, and scholarship writing\n- **How it works:** diagnostic first, then a personalised pathway of lessons, worked solutions and timed mock exams\n- **For parents:** weekly progress emails and a dashboard showing real study time\n- **Cost:** every module has a **free tier** with no credit card required\n\nIs there a particular subject or year level I can point you to?"
   },
   {
     "keywords": ["complaint", "lawyer", "ombudsman", "legal"],

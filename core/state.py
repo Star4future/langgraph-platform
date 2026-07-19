@@ -51,6 +51,7 @@ class BaseSupportState(TypedDict, total=False):
     draft_response: str
     tools_called: list[str]
     tool_results: dict[str, Any]
+    tool_invocations: list[dict]   # ordered [{name, arguments, result}] for SSE
 
     # ── Supervisor outputs ──────────────────────────────────────────
     quality_score: float      # 0.0..1.0
@@ -105,6 +106,7 @@ def initial_state(
         "draft_response": "",
         "tools_called": [],
         "tool_results": {},
+        "tool_invocations": [],
         "quality_score": 0.0,
         "quality_feedback": "",
         "final_response": "",

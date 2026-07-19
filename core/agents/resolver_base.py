@@ -61,6 +61,9 @@ class ResolverAgent:
         conversation = self._build_conversation(state)
         tools_called: list[str] = []
         tool_results: dict[str, Any] = {}
+        # Ordered record of each invocation (name + args + result), so the API
+        # layer can stream faithful tool_call / tool_result SSE events.
+        tool_invocations: list[dict[str, Any]] = []
 
         for iteration in range(self.max_tool_calls):
             response = await self.llm.complete(
@@ -76,6 +79,7 @@ class ResolverAgent:
                     "draft_response": draft,
                     "tools_called": tools_called,
                     "tool_results": tool_results,
+                    "tool_invocations": tool_invocations,
                 }
 
             # Execute each tool call
@@ -100,6 +104,9 @@ class ResolverAgent:
 
                 tools_called.append(name)
                 tool_results[f"{name}:{iteration}"] = result
+                tool_invocations.append(
+                    {"name": name, "arguments": args, "result": result}
+                )
 
                 # Feed result back using OpenAI v2 tool-call wire format
                 call_id = call.get("id", f"call_{iteration}")
@@ -128,6 +135,7 @@ class ResolverAgent:
             "draft_response": final.get("content", "I was unable to complete this request."),
             "tools_called": tools_called,
             "tool_results": tool_results,
+            "tool_invocations": tool_invocations,
         }
 
     # ── internal helpers ────────────────────────────────────────────

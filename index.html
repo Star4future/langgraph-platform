@@ -214,7 +214,7 @@
         <div class="stat"><span class="k">Education tools</span><span class="v">8</span></div>
         <div class="stat"><span class="k">Eval scenarios</span><span class="v">30</span></div>
         <div class="stat"><span class="k">New-vertical time</span><span class="v">~2 days</span></div>
-        <div class="stat"><span class="k">SSE event types</span><span class="v">6</span></div>
+        <div class="stat"><span class="k">SSE event types</span><span class="v">8</span></div>
         <div class="stat"><span class="k">Layering enforcement</span><span class="v">AST test</span></div>
       </div>
     </div>
@@ -225,7 +225,12 @@
     </footer>
   </div>
 
-<script>
+<script type="module">
+// Consume the typed, zod-validated SSE client (built from tools/sse-client.ts).
+// The page no longer hand-rolls SSE parsing — it uses the same client the CLI
+// and tests use, so the protocol has a single source of truth.
+import { streamChat } from '/sse-client.mjs';
+
 (function() {
   const msgsEl  = document.getElementById('messages');
   const input   = document.getElementById('input');
@@ -249,47 +254,30 @@
     sendBtn.disabled = true;
 
     const botBody = append('Assistant', '', 'bot');
-    let traceEl = null;
     const sessionId = 'web-' + Date.now();
 
     try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: question,
-          session_id: sessionId,
-          customer_id: 'web_visitor'
-        })
-      });
-      if (!res.body) throw new Error('No response body');
-
-      const reader = res.body.getReader();
-      const dec = new TextDecoder();
-      let buf = '';
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buf += dec.decode(value, { stream: true });
-        const lines = buf.split('\n');
-        buf = lines.pop();
-
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue;
-          let payload;
-          try { payload = JSON.parse(line.slice(6)); } catch { continue; }
-
-          if (payload.type === 'triage') {
-            traceEl = append('event', `triage → intent: ${payload.intent} · confidence: ${payload.confidence} · urgency: ${payload.urgency}`, 'event');
-          } else if (payload.type === 'token') {
-            botBody.textContent += payload.delta;
-            msgsEl.scrollTop = msgsEl.scrollHeight;
-          } else if (payload.type === 'human_escalation') {
-            append('event', `🙋 escalated to human (reason: ${payload.reason})`, 'event');
-          } else if (payload.type === 'done') {
-            append('event', `done · ${payload.latency_ms}ms · ${payload.tokens} tokens · ${payload.mode}`, 'event');
-          }
+      // Typed event stream — every branch below is a validated AgentEvent.
+      for await (const ev of streamChat('', {
+        message: question,
+        session_id: sessionId,
+        customer_id: 'web_visitor'
+      })) {
+        if (ev.type === 'triage') {
+          append('event', `triage → intent: ${ev.intent} · confidence: ${ev.confidence} · urgency: ${ev.urgency}`, 'event');
+        } else if (ev.type === 'tool_call') {
+          append('event', `🔧 tool_call → ${ev.tool}(${JSON.stringify(ev.arguments)})`, 'event');
+        } else if (ev.type === 'tool_result') {
+          append('event', `↩︎ tool_result → ${ev.tool}`, 'event');
+        } else if (ev.type === 'token') {
+          botBody.textContent += ev.delta;
+          msgsEl.scrollTop = msgsEl.scrollHeight;
+        } else if (ev.type === 'human_escalation') {
+          append('event', `🙋 escalated to human (reason: ${ev.reason})`, 'event');
+        } else if (ev.type === 'done') {
+          append('event', `done · ${ev.latency_ms}ms · ${ev.tokens} tokens · ${ev.mode}`, 'event');
+        } else if (ev.type === 'error') {
+          append('event', `⚠️ error: ${ev.message}`, 'event');
         }
       }
     } catch (e) {

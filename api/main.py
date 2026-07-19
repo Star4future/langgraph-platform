@@ -14,7 +14,7 @@ import os
 import sys
 from pathlib import Path
 
-from fastapi.responses import HTMLResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse, Response
 
 # Ensure the project root is on sys.path so `core` and `verticals` are importable.
 # api/main.py → parent is project root.
@@ -51,3 +51,25 @@ async def landing() -> HTMLResponse:
 @app.get("/robots.txt", response_class=PlainTextResponse, include_in_schema=False)
 async def robots() -> PlainTextResponse:
     return PlainTextResponse("User-agent: *\nAllow: /\n")
+
+
+# ── Typed SSE client bundle ─────────────────────────────────────────
+# The demo page imports this ES module (built from tools/sse-client.ts by
+# `npm run build:web`) so the shipping page consumes the typed, zod-validated
+# client instead of a hand-rolled inline parser.
+_SSE_CLIENT_JS_PATH = ROOT / "web" / "sse-client.mjs"
+
+
+@app.get("/sse-client.mjs", include_in_schema=False)
+async def sse_client_module() -> Response:
+    if _SSE_CLIENT_JS_PATH.exists():
+        return Response(
+            content=_SSE_CLIENT_JS_PATH.read_text(encoding="utf-8"),
+            media_type="application/javascript",
+            headers={"Cache-Control": "no-cache"},
+        )
+    return Response(
+        content="// sse-client bundle not built — run `npm run build:web` in tools/",
+        media_type="application/javascript",
+        status_code=404,
+    )

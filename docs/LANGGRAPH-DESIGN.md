@@ -137,19 +137,26 @@ If `retry_count >= 2`, the graph escalates to human (we don't loop forever).
 
 ## Streaming events
 
-We emit 6 SSE event types per chat (`core/api/sse.py`):
+We emit 8 SSE event types per chat (`core/api/sse.py`, emitted by `core/api/main.py`):
 
 | Event | Purpose | Frontend use |
 |-------|---------|--------------|
 | `thread` | Carries `thread_id` for multi-turn | Save to localStorage |
 | `triage` | Shows agent classification | Render "✓ Detected intent: refund" |
-| `tool_call` | LLM requesting tool execution | Render "🔧 Looking up subscription..." |
+| `tool_call` | Resolver invoking a tool (name + args) | Render "🔧 Looking up subscription..." |
 | `tool_result` | Tool returned data | (Optional) hide or show snippet |
 | `token` | Streaming response tokens | Append to bubble (typewriter effect) |
-| `citations` | Sources used | Render source pills |
-| `done` | Stream ended | Final formatting + analytics |
+| `human_escalation` | Graph paused for human review | Render "🙋 escalated" notice |
+| `done` | Stream ended (latency / tokens / mode) | Final formatting + analytics |
+| `error` | Stream-level failure | Render error state |
 
-Frontend (`deploy/education-demo/widget.js`) shows the Agent thinking process inline — a deliberate UX choice to differentiate from "magic black box" chatbots.
+A `citations` helper also exists in `sse.py` but is not emitted by the
+customer-support graph — it is reserved for a future source-grounded vertical.
+
+The demo page (`index.html`) consumes this stream through the typed,
+zod-validated TypeScript client in `tools/` (bundled to `web/sse-client.mjs`) and
+shows the agent thinking process inline — a deliberate UX choice to
+differentiate from "magic black box" chatbots.
 
 ---
 

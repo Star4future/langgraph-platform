@@ -27,3 +27,37 @@ jobs:
 
       - name: Eval gate — resolution rate must clear 0.70
         run: python -m eval.run_eval --vertical education
+
+  sse-client:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: tools/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Unit tests (parser + zod validation)
+        run: npm test
+
+      - name: Rebuild browser bundle and fail if the committed one drifted
+        run: |
+          npm run build:web
+          git diff --exit-code ../web/sse-client.mjs

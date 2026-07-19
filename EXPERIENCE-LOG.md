@@ -84,7 +84,7 @@ def lookup_subscription(user_email: str) -> dict:
 `core/agents/tools.py` extracts the OpenAI function-calling schema from type hints + docstring. **Saves the vertical author ~30 minutes per tool** of schema-writing busywork.
 
 ### 4.6 SSE streaming with custom event types
-Six event types: `thread`, `triage`, `tool_call`, `tool_result`, `token`, `done`. Frontend renders them as inline traces ("✓ Detected intent: refund" / "🔧 Looking up subscription...") — gives users **visibility into agent reasoning** rather than waiting for a magic black-box response.
+Eight event types: `thread`, `triage`, `tool_call`, `tool_result`, `token`, `human_escalation`, `done`, `error` — every one actually emitted by `core/api/main.py` (a `citations` helper exists but is reserved; we type and document only what ships). Frontend renders them as inline traces ("✓ Detected intent: refund" / "🔧 Looking up subscription...") — gives users **visibility into agent reasoning** rather than waiting for a magic black-box response. The stream is consumed through a typed, zod-validated TS client (`tools/`), so a malformed event is rejected at runtime instead of breaking the UI.
 
 ### 4.7 Vercel auto-detect Python
 The `vercel.json` **does NOT specify `"runtime": "python3.11"`**. That string is an invalid format on current Vercel; ~30 minutes were lost discovering this on an earlier project. Just have `.py` files in `api/` — Vercel handles the rest.

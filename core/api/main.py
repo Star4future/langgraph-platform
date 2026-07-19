@@ -41,6 +41,8 @@ from core.api.sse import (
     sse_event,
     thread_event,
     token_event,
+    tool_call_event,
+    tool_result_event,
     triage_event,
 )
 from core.state import initial_state
@@ -281,6 +283,16 @@ async def _run_chat(
                         confidence=output.get("confidence", 0.0),
                         urgency=output.get("urgency", "low"),
                     )
+
+            # Resolver tool usage surfaced: one tool_call + tool_result pair per
+            # invocation, in call order (the resolver records these on state).
+            elif ev_type == "on_chain_end" and event.get("name") == "resolver":
+                output = event.get("data", {}).get("output", {})
+                if isinstance(output, dict):
+                    for inv in output.get("tool_invocations", []) or []:
+                        name = inv.get("name", "unknown")
+                        yield tool_call_event(name, inv.get("arguments", {}) or {})
+                        yield tool_result_event(name, inv.get("result"))
 
             # Streaming tokens: real mode uses LangChain ChatModel → on_chat_model_stream.
             # Mock mode: emit tokens from supervisor output when it finalises the response.

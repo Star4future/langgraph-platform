@@ -159,9 +159,16 @@ langgraph-platform/
 ├── verticals/                ← industry modules (education, _template)
 ├── deploy/                   ← per-deploy configuration
 ├── eval/                     ← scenarios + harness + reports
-├── tests/                    ← unit + integration
+├── tests/                    ← unit + integration (Python)
+├── tools/                    ← typed, zod-validated TS SSE client + Node CLI (own CI job)
+├── web/                      ← browser bundle of the TS client (imported by index.html)
 └── docs/                     ← QUICKSTART, LANGGRAPH-DESIGN, DEPLOYMENT-GUIDE
 ```
+
+The demo page consumes the agent stream through the typed TypeScript client in
+`tools/` — an eight-variant, zod-validated discriminated union over the SSE
+protocol, with a Node CLI (`cd tools && npm run cli`) that streams the live
+deployment. See [`tools/README.md`](tools/README.md).
 
 ---
 

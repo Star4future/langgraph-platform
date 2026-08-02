@@ -13,8 +13,11 @@ artifacts/
 # Tests don't run on Vercel
 tests/
 
-# Eval datasets are large; only the harness code needs to be present
+# Eval datasets are large; only the harness code needs to be present —
+# except the education smoke set, which the web console's /evals page
+# reads at build time (and /api/eval's dataset whitelist can then serve).
 eval/datasets/
+!eval/datasets/education_30.jsonl
 
 # Scripts only needed locally
 scripts/

@@ -22,16 +22,20 @@ function urgencyTone(urgency: string): string {
 
 function EventShell({
   tag,
+  stamp,
   tone,
   children,
 }: {
   tag: string;
+  /** Client arrival offset, e.g. "t+0.4s" — from the run's event clock. */
+  stamp?: string | null;
   tone: string;
   children: React.ReactNode;
 }) {
   return (
     <div className={`rounded-lg border px-3.5 py-2.5 text-sm ${tone}`}>
       <span className="float-right ml-3 font-mono text-[10px] uppercase tracking-wider text-ink-dim">
+        {stamp && <span className="mr-2 lowercase">{stamp}</span>}
         {tag}
       </span>
       {children}
@@ -39,10 +43,21 @@ function EventShell({
   );
 }
 
-function ToolRound({ round, index, total }: { round: ResolverRound; index: number; total: number }) {
+function ToolRound({
+  round,
+  index,
+  total,
+  stamp,
+}: {
+  round: ResolverRound;
+  index: number;
+  total: number;
+  stamp: string | null;
+}) {
   return (
     <EventShell
       tag={total > 1 ? `resolver · pass ${index + 1}` : "resolver"}
+      stamp={stamp}
       tone="border-line bg-surface-2"
     >
       <div className="space-y-1.5">
@@ -90,6 +105,14 @@ function ToolRound({ round, index, total }: { round: ResolverRound; index: numbe
 export function RunView({ run, onRetry }: { run: RunState; onRetry: () => void }) {
   const failed = run.phase === "error" || run.phase === "aborted";
 
+  // Arrival offsets relative to the first event (the thread bookkeeping
+  // event) — a client-side clock, labelled as such, never invented.
+  const t0 = run.timeline[0]?.atMs;
+  const stampOf = (atMs: number | undefined): string | null =>
+    t0 !== undefined && atMs !== undefined ? `t+${((atMs - t0) / 1000).toFixed(1)}s` : null;
+  const stampForType = (type: string): string | null =>
+    stampOf(run.timeline.find((e) => e.event.type === type)?.atMs);
+
   return (
     <div className="space-y-2">
       {/* Connection meta */}
@@ -106,7 +129,7 @@ export function RunView({ run, onRetry }: { run: RunState; onRetry: () => void }
 
       {/* Triage classification */}
       {run.triage && (
-        <EventShell tag="triage" tone="border-line bg-surface-2">
+        <EventShell tag="triage" stamp={stampForType("triage")} tone="border-line bg-surface-2">
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <span className="font-mono text-ink">{run.triage.intent}</span>
             <span
@@ -130,7 +153,13 @@ export function RunView({ run, onRetry }: { run: RunState; onRetry: () => void }
 
       {/* Resolver tool rounds */}
       {run.rounds.map((round, i) => (
-        <ToolRound key={i} round={round} index={i} total={run.rounds.length} />
+        <ToolRound
+          key={i}
+          round={round}
+          index={i}
+          total={run.rounds.length}
+          stamp={stampOf(round.startAtMs)}
+        />
       ))}
 
       {/* Streamed answer */}
@@ -149,7 +178,11 @@ export function RunView({ run, onRetry }: { run: RunState; onRetry: () => void }
 
       {/* Human escalation */}
       {run.escalation && (
-        <EventShell tag="human_escalation" tone="border-warn/40 bg-warn/10">
+        <EventShell
+          tag="human_escalation"
+          stamp={stampForType("human_escalation")}
+          tone="border-warn/40 bg-warn/10"
+        >
           <p className="text-xs leading-5">
             Routed to a person ({run.escalation.reason}). The reviewer picks up
             a draft scored{" "}

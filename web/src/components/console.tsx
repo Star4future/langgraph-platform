@@ -76,7 +76,10 @@ export function Console() {
     try {
       await streamAgentChat(
         { message, session_id: sessionRef.current, customer_id: "web_visitor" },
-        { onEvent: (event) => dispatch({ type: "event", event }) },
+        {
+          onEvent: (event) =>
+            dispatch({ type: "event", event, atMs: performance.now() }),
+        },
         controller.signal,
       );
       dispatch({ type: "stream_closed" });

@@ -34,6 +34,8 @@ export interface ToolInvocation {
  */
 export interface ResolverRound {
   tools: ToolInvocation[];
+  /** Client arrival time of the pass's first tool_call (performance.now). */
+  startAtMs?: number;
 }
 
 export interface RunState {
@@ -48,8 +50,13 @@ export interface RunState {
   completion: Pick<DoneEvent, "latency_ms" | "tokens" | "mode"> | null;
   /** Server-reported `error` event, or a client transport failure. */
   errorMessage: string | null;
-  /** Non-token events in arrival order, for the timeline. */
-  timeline: { seq: number; event: AgentEvent }[];
+  /**
+   * Non-token events in arrival order, for the timeline. atMs is the
+   * client's arrival clock (performance.now, supplied by the component —
+   * the reducer itself stays clock-free and deterministic); cards render
+   * offsets relative to the first entry.
+   */
+  timeline: { seq: number; event: AgentEvent; atMs?: number }[];
   nextSeq: number;
 }
 
@@ -88,7 +95,7 @@ export const initialConsoleState: ConsoleState = {
 export type ConsoleAction =
   | { type: "send"; message: string }
   /** A validated AgentEvent arrived on the active stream. */
-  | { type: "event"; event: AgentEvent }
+  | { type: "event"; event: AgentEvent; atMs?: number }
   /** The transport failed (fetch threw, stream cut mid-flight). */
   | { type: "stream_failed"; message: string }
   /** The stream ended cleanly at the HTTP level. */
@@ -118,22 +125,22 @@ const replaceLastRun = (state: ConsoleState, run: RunState): ConsoleState => {
 
 // ── Event application (facts only) ───────────────────────────────────
 
-const record = (run: RunState, event: AgentEvent): RunState => ({
+const record = (run: RunState, event: AgentEvent, atMs?: number): RunState => ({
   ...run,
-  timeline: [...run.timeline, { seq: run.nextSeq, event }],
+  timeline: [...run.timeline, { seq: run.nextSeq, event, atMs }],
   nextSeq: run.nextSeq + 1,
 });
 
-function applyEvent(run: RunState, event: AgentEvent): RunState {
+function applyEvent(run: RunState, event: AgentEvent, atMs?: number): RunState {
   switch (event.type) {
     case "thread":
-      return { ...record(run, event), phase: "streaming", threadId: event.thread_id };
+      return { ...record(run, event, atMs), phase: "streaming", threadId: event.thread_id };
 
     case "triage":
-      return { ...record(run, event), triage: event };
+      return { ...record(run, event, atMs), triage: event };
 
     case "tool_call": {
-      const next = record(run, event);
+      const next = record(run, event, atMs);
       const rounds = next.rounds.slice();
       const last = rounds[rounds.length - 1];
       // The server flushes a whole resolver pass as one contiguous batch.
@@ -146,15 +153,15 @@ function applyEvent(run: RunState, event: AgentEvent): RunState {
         settled: false,
       };
       if (startNewRound) {
-        rounds.push({ tools: [invocation] });
+        rounds.push({ tools: [invocation], startAtMs: atMs });
       } else {
-        rounds[rounds.length - 1] = { tools: [...last.tools, invocation] };
+        rounds[rounds.length - 1] = { ...last, tools: [...last.tools, invocation] };
       }
       return { ...next, rounds };
     }
 
     case "tool_result": {
-      const next = record(run, event);
+      const next = record(run, event, atMs);
       const rounds = next.rounds.slice();
       const last = rounds[rounds.length - 1];
       if (!last) return next; // result without a call — record it, change nothing
@@ -162,7 +169,7 @@ function applyEvent(run: RunState, event: AgentEvent): RunState {
       const idx = tools.findIndex((t) => !t.settled && t.tool === event.tool);
       if (idx === -1) return next;
       tools[idx] = { ...tools[idx], result: event.result, settled: true };
-      rounds[rounds.length - 1] = { tools };
+      rounds[rounds.length - 1] = { ...last, tools };
       return { ...next, rounds };
     }
 
@@ -173,12 +180,12 @@ function applyEvent(run: RunState, event: AgentEvent): RunState {
 
     case "human_escalation":
       return {
-        ...record(run, event),
+        ...record(run, event, atMs),
         escalation: { reason: event.reason, draftQuality: event.draft_quality },
       };
 
     case "done": {
-      const next = record(run, event);
+      const next = record(run, event, atMs);
       return {
         ...next,
         completion: {
@@ -193,7 +200,7 @@ function applyEvent(run: RunState, event: AgentEvent): RunState {
     }
 
     case "error":
-      return { ...record(run, event), errorMessage: event.message, phase: "error" };
+      return { ...record(run, event, atMs), errorMessage: event.message, phase: "error" };
   }
 }
 
@@ -220,7 +227,7 @@ export function consoleReducer(state: ConsoleState, action: ConsoleAction): Cons
       // `error` event with `done` — so completion metadata is recorded.
       if (phase === "aborted" || phase === "done") return state;
       if (phase === "error" && action.event.type !== "done") return state;
-      return replaceLastRun(state, applyEvent(turn.run, action.event));
+      return replaceLastRun(state, applyEvent(turn.run, action.event, action.atMs));
     }
 
     case "stream_failed": {

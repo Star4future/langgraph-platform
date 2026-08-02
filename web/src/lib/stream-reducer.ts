@@ -91,6 +91,8 @@ export type ConsoleAction =
   | { type: "event"; event: AgentEvent }
   /** The transport failed (fetch threw, stream cut mid-flight). */
   | { type: "stream_failed"; message: string }
+  /** The stream ended cleanly at the HTTP level. */
+  | { type: "stream_closed" }
   /** The user cancelled the in-flight run. */
   | { type: "aborted" }
   /** Re-run the last turn after an error/abort, keeping its user message. */
@@ -222,6 +224,19 @@ export function consoleReducer(state: ConsoleState, action: ConsoleAction): Cons
         ...turn.run,
         phase: "error",
         errorMessage: action.message,
+      });
+    }
+
+    case "stream_closed": {
+      // The server always terminates a run with `done` (even after `error`),
+      // so a clean close while we still think we're streaming means the
+      // connection was cut — surface it as a failure, not a silent stop.
+      const turn = activeTurn(state);
+      if (!turn) return state;
+      return replaceLastRun(state, {
+        ...turn.run,
+        phase: "error",
+        errorMessage: "The stream ended before the run completed.",
       });
     }
 

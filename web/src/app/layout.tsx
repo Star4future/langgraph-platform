@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
+import { HealthBadge } from "@/components/health-badge";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -62,14 +63,9 @@ export default function RootLayout({
                 About
               </Link>
             </nav>
-            {/* Honesty layer: this deployment runs the engine's mock LLM
-                unless a key is configured — say so on every page. */}
-            <span
-              className="rounded-full border border-warn/50 bg-warn/10 px-2.5 py-0.5 font-mono text-[11px] font-semibold tracking-wide text-warn"
-              title="No LLM key is configured on this deployment; responses come from the engine's deterministic mock mode."
-            >
-              MOCK MODE
-            </span>
+            {/* Honesty layer: the badge reports /api/health on every page
+                instead of hardcoding a claim about the deployment. */}
+            <HealthBadge />
             <a
               href={REPO_URL}
               target="_blank"

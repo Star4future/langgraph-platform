@@ -10,6 +10,13 @@ const nextConfig: NextConfig = {
     root: path.join(__dirname, ".."),
   },
 
+  // The dev server's gzip layer buffers proxied SSE until the stream ends
+  // (the browser advertises gzip; curl doesn't — which is how this hid).
+  // Compression off keeps event delivery incremental through the dev
+  // rewrite; production traffic never passes through Next's compressor —
+  // Vercel routes /api/* to the FastAPI function directly.
+  compress: false,
+
   async rewrites() {
     // Dev-time proxy to a running engine (local uvicorn, or the deployed
     // demo when no local engine is up). In production Vercel routes

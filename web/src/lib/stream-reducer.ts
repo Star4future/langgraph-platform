@@ -212,8 +212,14 @@ export function consoleReducer(state: ConsoleState, action: ConsoleAction): Cons
     }
 
     case "event": {
-      const turn = activeTurn(state);
-      if (!turn) return state; // late event after abort/completion — drop
+      const turn = lastTurn(state);
+      if (!turn) return state;
+      const phase = turn.run.phase;
+      // Aborted and completed runs accept nothing further. An errored run
+      // still accepts the server's epilogue — the engine always follows an
+      // `error` event with `done` — so completion metadata is recorded.
+      if (phase === "aborted" || phase === "done") return state;
+      if (phase === "error" && action.event.type !== "done") return state;
       return replaceLastRun(state, applyEvent(turn.run, action.event));
     }
 
@@ -289,27 +295,35 @@ export interface PipelineView {
 export function derivePipeline(run: RunState): PipelineView {
   const { phase, triage, rounds, sawToken, escalation, completion } = run;
   const finished = phase === "done" || phase === "error" || phase === "aborted";
+  const settled = finished || escalation !== null || completion !== null;
   const retries = Math.max(0, rounds.length - 1);
 
   // Triage: running once the stream opens, classified on the triage event.
   const triageStatus: NodeStatus =
     triage !== null ? "done" : phase === "streaming" ? "running" : "idle";
 
-  // Resolver: runs after triage; its batches are visible as rounds; the
-  // first token or an escalation means its final pass is behind us.
-  let resolver: NodeStatus = "idle";
-  if (triage !== null) resolver = "running";
-  if (sawToken || escalation !== null || completion !== null) resolver = "done";
-  else if (retries > 0) resolver = "retrying";
-  if (finished && resolver === "running") resolver = "done";
+  // Resolver. A second tool batch after tokens means the supervisor
+  // routed back — the run is in a retry pass even though a draft already
+  // streamed (mock mode replays the first pass's draft only once).
+  // Evidence that the resolver/supervisor stages actually ran: tool
+  // batches, streamed tokens, or an escalation (which the graph only
+  // reaches after supervisor scoring). An aborted run without any of
+  // these leaves the stages idle — we don't claim work we never saw.
+  const stagesRan = rounds.length > 0 || sawToken || escalation !== null;
 
-  // Supervisor: scoring happens between the resolver's batch and the first
-  // token (mock mode streams the approved draft from the supervisor node).
+  let resolver: NodeStatus = "idle";
+  if (settled) resolver = stagesRan ? "done" : "idle";
+  else if (retries > 0) resolver = "retrying";
+  else if (sawToken) resolver = "done";
+  else if (triage !== null) resolver = "running";
+
+  // Supervisor: scores after each resolver pass; during a retry pass it is
+  // about to score again, so it reads as running until the run settles.
   let supervisor: NodeStatus = "idle";
-  if (rounds.length > 0 && resolver === "done" && !sawToken && escalation === null && !finished) {
-    supervisor = "running";
-  }
-  if (sawToken || escalation !== null || completion !== null) supervisor = "done";
+  if (settled) supervisor = stagesRan ? "done" : "idle";
+  else if (retries > 0) supervisor = "running";
+  else if (sawToken) supervisor = "done";
+  else if (rounds.length > 0) supervisor = "running";
 
   // Human: only lit by an explicit escalation event.
   let human: NodeStatus = "idle";

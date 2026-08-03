@@ -24,7 +24,7 @@ never emits it; it is reserved for a future source-grounded vertical.
 | ------------------ | ------------------------------------------------------------------------------------------------------ |
 | `sse-client.ts`    | zod schemas + `AgentEvent` union (8 types), SSE block parser, chunk-safe stream reader, `streamChat()` |
 | `sse-cli.ts`       | Node CLI: preflight health check, then prints each typed event live + a summary                        |
-| `web-entry.ts`     | browser entry — esbuild bundles it (+ zod) into `../web/sse-client.mjs` for `index.html`               |
+| `web-entry.ts`     | browser entry — esbuild bundles it (+ zod) into `../web/sse-client.mjs`, the standalone browser build  |
 | `test/sse.test.ts` | Vitest — parse every event type, reject malformed payloads, reassemble split chunks                    |
 
 ## Run
@@ -68,10 +68,13 @@ source of truth). The CLI's `render()` switch has an exhaustiveness guard
 (`const _never: never`), so adding an event type without handling it is a
 compile error.
 
-## Consumed by the shipping demo page
+## Consumers
 
-`index.html` imports `/sse-client.mjs` (built from `web-entry.ts`) and drives its
-chat UI through `streamChat` — the deployed page uses the same validated client
-as the CLI and tests, so the protocol has a single source of truth instead of a
-hand-rolled inline parser. The Python server serves the bundle via a route in
-`api/main.py`. CI rebuilds it and fails if the committed bundle has drifted.
+The Next.js console in `web/` imports `sse-client.ts` directly — schema, parser
+and stream reader from this one file drive its chat UI, so the protocol has a
+single source of truth across the CLI, the tests and the front end. The bundled
+`../web/sse-client.mjs` (built from `web-entry.ts`) remains published at
+`/sse-client.mjs` by a route in `api/main.py` as the standalone browser build —
+drop it into any page and call `streamChat` without a build step; it powered the
+original single-file demo page before the console replaced it. CI rebuilds the
+bundle and fails if the committed copy has drifted.

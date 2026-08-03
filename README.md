@@ -18,7 +18,7 @@
 [![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?logo=vercel&logoColor=white)]()
 [![MIT](https://img.shields.io/badge/License-MIT-yellow)]()
 
-[![Live demo — click any example chip and watch the SSE events stream](docs/assets/demo-landing.png)](https://langgraph-platform-demo.vercel.app)
+[![Live console — fire an example question and watch the typed SSE events land as timeline cards while the run pipeline lights up](docs/assets/demo-console.png)](https://langgraph-platform-demo.vercel.app)
 
 ---
 

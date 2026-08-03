@@ -61,3 +61,43 @@ jobs:
         run: |
           npm run build:web
           git diff --exit-code ../web/sse-client.mjs
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: |
+            tools/package-lock.json
+            web/package-lock.json
+
+      # The console imports ../tools/sse-client.ts; its zod resolves from
+      # tools/node_modules, so the protocol package installs first.
+      - name: Install protocol package
+        run: npm ci
+        working-directory: tools
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Behavioural tests (reducer, pipeline projection, rendering)
+        run: npm test
+
+      - name: Production build — all routes must prerender static
+        run: npm run build

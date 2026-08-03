@@ -176,4 +176,40 @@ The companion `EXPERT-REVIEW.md` is an independent technical review of the same 
 
 ---
 
-*v1.0 · End of log.*
+## 10. The Web Console (August 2026)
+
+The single-file demo page did its job — prove the stream is real — and then became
+the ceiling. The August pass replaced it with a proper front end in `web/`:
+Next.js 16 + React 19 + TypeScript, deployed on the same domain, engine untouched.
+
+**What carried over from v1's discipline:**
+
+- **One protocol source.** The console imports `tools/sse-client.ts` — the same
+  zod-validated union the CLI and tests consume. The web app defines zero event
+  types of its own; a protocol change breaks the build instead of drifting.
+- **Honest state.** The stream never announces a node *starting*, so the pipeline
+  panel derives node status from completion evidence only — and each stage settles
+  on its *own* evidence. A cancelled run leaves the judge unjudged instead of
+  inventing a verdict. That rule is pinned by tests, and exists because a review
+  caught the projection promoting the supervisor to "done" on a Stop press.
+- **Adversarial review, again.** Two external review rounds ran against the build
+  as it landed — the same pattern as `EXPERT-REVIEW.md`. Between them they caught a
+  README claiming "/evals ships zero client JavaScript" (false: the health badge in
+  the root layout ships an island on every route), a routing-rules card that listed
+  the engine's checks in the wrong order, and the supervisor-verdict bug above.
+  Every finding is a commit with the story in its message.
+
+**Lessons this pass added to the log:**
+
+1. **Verify with the client that will actually run.** Dev-server gzip buffered
+   proxied SSE for browsers while curl streamed fine — curl doesn't advertise
+   gzip. A green check from a tool that doesn't share the real client's failure
+   mode is not a check.
+2. **CI's job is to disagree with your laptop.** The web CI job's first run failed
+   on Node 20 — jsdom 30's undici wanted a Node 21 API my local Node 24 had.
+   Typecheck and lint were green; the failure was runtime-only.
+3. **Every absolute claim in docs is a diffable artifact.** "Zero client JS",
+   "mirrors the routing", "all routes static" — each got checked against build
+   output or source by a reviewer, and each needed tightening or a real gate.
+
+*v1.1 · Console pass appended August 2026.*

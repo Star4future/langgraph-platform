@@ -4,6 +4,7 @@
  * Purely presentational — imported by the Console client boundary, so it
  * needs no 'use client' of its own.
  */
+import type { AgentEventType } from "@/lib/protocol";
 import type { ResolverRound, RunState } from "@/lib/stream-reducer";
 
 function Pre({ value }: { value: unknown }) {
@@ -110,7 +111,7 @@ export function RunView({ run, onRetry }: { run: RunState; onRetry: () => void }
   const t0 = run.timeline[0]?.atMs;
   const stampOf = (atMs: number | undefined): string | null =>
     t0 !== undefined && atMs !== undefined ? `t+${((atMs - t0) / 1000).toFixed(1)}s` : null;
-  const stampForType = (type: string): string | null =>
+  const stampForType = (type: AgentEventType): string | null =>
     stampOf(run.timeline.find((e) => e.event.type === type)?.atMs);
 
   return (
@@ -121,7 +122,7 @@ export function RunView({ run, onRetry }: { run: RunState; onRetry: () => void }
           stream open · thread {run.threadId}
         </p>
       ) : run.phase === "connecting" ? (
-        <div className="space-y-2" aria-label="connecting">
+        <div className="space-y-2" role="status" aria-label="Connecting to the engine">
           <div className="h-9 w-2/3 animate-pulse rounded-lg bg-surface-2" />
           <div className="h-9 w-1/2 animate-pulse rounded-lg bg-surface-2" />
         </div>
@@ -195,20 +196,25 @@ export function RunView({ run, onRetry }: { run: RunState; onRetry: () => void }
         </EventShell>
       )}
 
-      {/* Failure states */}
+      {/* Failure states — role=alert so screen readers hear the outcome
+          without an aria-live region shouting every streamed token. */}
       {run.phase === "error" && (
-        <EventShell tag="error" tone="border-err/40 bg-err/10">
-          <p className="text-xs leading-5 text-err">
-            {run.errorMessage ?? "The run failed."}
-          </p>
-        </EventShell>
+        <div role="alert">
+          <EventShell tag="error" tone="border-err/40 bg-err/10">
+            <p className="text-xs leading-5 text-err">
+              {run.errorMessage ?? "The run failed."}
+            </p>
+          </EventShell>
+        </div>
       )}
       {run.phase === "aborted" && (
-        <EventShell tag="cancelled" tone="border-line bg-surface-2">
-          <p className="text-xs leading-5 text-ink-dim">
-            Run cancelled before the stream finished.
-          </p>
-        </EventShell>
+        <div role="status">
+          <EventShell tag="cancelled" tone="border-line bg-surface-2">
+            <p className="text-xs leading-5 text-ink-dim">
+              Run cancelled before the stream finished.
+            </p>
+          </EventShell>
+        </div>
       )}
       {failed && (
         <button
@@ -216,13 +222,13 @@ export function RunView({ run, onRetry }: { run: RunState; onRetry: () => void }
           onClick={onRetry}
           className="rounded-lg border border-accent/60 bg-accent/10 px-3.5 py-2 text-xs font-medium text-accent-soft transition-colors hover:bg-accent/20"
         >
-          ↻ Retry — same session, context kept
+          ↻ Retry — same session id, rerun on the same thread
         </button>
       )}
 
       {/* Completion meta */}
       {run.completion && (
-        <p className="font-mono text-[10px] text-ink-dim">
+        <p aria-live="polite" className="font-mono text-[10px] text-ink-dim">
           done · {run.completion.latency_ms} ms · {run.completion.tokens} tokens
           · mode:{" "}
           <span className={run.completion.mode === "mock" ? "text-warn" : "text-ok"}>

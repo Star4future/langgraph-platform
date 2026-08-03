@@ -56,20 +56,40 @@ export function Console() {
   const sessionRef = useRef<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const logRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const wasBusyRef = useRef(false);
 
   const busy = activeTurn(state) !== null;
   const last = lastTurn(state);
 
-  // Keep the newest event in view while a run streams.
+  // Keep the newest event in view while a run streams — but only when the
+  // reader is already at the bottom. Someone scrolled up inspecting an
+  // earlier tool result must not be yanked down by every token.
   useEffect(() => {
     const el = logRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
+    if (!el) return;
+    const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+    if (nearBottom) el.scrollTop = el.scrollHeight;
   }, [state]);
+
+  // Cancel the in-flight stream if the console unmounts mid-run (client
+  // navigation away) — otherwise the reader pumps a dead component.
+  useEffect(() => () => abortRef.current?.abort(), []);
+
+  // Sending disables the input, which drops focus to <body>; hand it back
+  // when the run settles.
+  useEffect(() => {
+    if (wasBusyRef.current && !busy) inputRef.current?.focus();
+    wasBusyRef.current = busy;
+  }, [busy]);
 
   async function pump(message: string) {
     // The session id survives retries and follow-ups on purpose: the
-    // engine keys its checkpointed thread on it, so a retried run resumes
-    // the same conversation context instead of starting a stranger's.
+    // engine keys its checkpointed thread on it. How much actually
+    // carries across runs depends on the deployment's checkpointer —
+    // the default MemorySaver is per-process, so on serverless the
+    // guarantee is "same thread key", not durable memory. The UI copy
+    // promises only the former.
     sessionRef.current ??= newSessionId();
     const controller = new AbortController();
     abortRef.current = controller;
@@ -99,7 +119,10 @@ export function Console() {
 
   function send(message: string) {
     const trimmed = message.trim();
-    if (busy || !trimmed) return;
+    // abortRef doubles as the in-flight gate: the reducer would drop a
+    // second turn anyway, but without this check the second pump() would
+    // still run and orphan the first AbortController.
+    if (busy || abortRef.current || !trimmed) return;
     dispatch({ type: "send", message: trimmed });
     setDraft("");
     void pump(trimmed);
@@ -112,6 +135,7 @@ export function Console() {
   function retry() {
     const turn = lastTurn(state);
     if (!turn || (turn.run.phase !== "error" && turn.run.phase !== "aborted")) return;
+    if (abortRef.current) return;
     dispatch({ type: "retry" });
     void pump(turn.user);
   }
@@ -175,9 +199,11 @@ export function Console() {
           }}
         >
           <input
+            ref={inputRef}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             placeholder={busy ? "Streaming…" : "Ask a question…"}
+            aria-label="Message the education support agent"
             disabled={busy}
             className="min-w-0 flex-1 rounded-lg border border-line bg-surface-2 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-ink-dim/70 focus:border-accent disabled:opacity-60"
           />

@@ -53,8 +53,10 @@ export default function AboutPage() {
         </p>
         <p>
           <span className="text-ink">What&apos;s deliberately absent:</span>{" "}
-          authentication, a database, real LLM calls, rate limiting and
-          multi-tenancy. Taking this to production is exactly the interesting
+          authentication, a database, real LLM calls, rate limiting,
+          multi-tenancy — and a durable checkpoint store, so paused
+          escalations live only as long as the serverless worker that holds
+          them. Taking this to production is exactly the interesting
           conversation — auth in front, a real engine deployment behind a
           stable origin, backpressure on the stream, tracing and cost controls
           on every model call. The repository&apos;s expert review tracks which

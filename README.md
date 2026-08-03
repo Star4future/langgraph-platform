@@ -137,7 +137,7 @@ A Next.js 16 + React 19 + TypeScript console over the engine's event stream:
   Node tests use. Cancellation, stream-cut error states and context-keeping
   retry included.
 - **Run pipeline panel** — Triage → Resolver → Supervisor → (Human) node states
-  derived purely from wire facts; the protocol carries completion events only,
+  derived purely from wire facts; the stream never announces a node starting,
   so "running" is an explicit inference, never an animation.
 - **Evals page** — `eval/EVAL-RESULTS.md` and the 30-scenario dataset rendered
   at build time, imperfect cells called out instead of averaged away.

@@ -42,7 +42,7 @@ npm run build          # production build — all routes prerender static
 
 ```
 src/lib/protocol.ts        →  re-exports ../tools/sse-client.ts (single schema source;
-                              the only file in web/ that reaches outside the app)
+                              the app's one import from outside web/)
 src/lib/transport.ts       →  fetch POST /api/chat + readAgentStream + AbortSignal
 src/lib/stream-reducer.ts  →  pure state machine: wire facts in, one derived
                               projection (derivePipeline) for the panel
@@ -55,10 +55,11 @@ src/app/…                  →  / console · /evals artefact render · /about
 The flow for one run: the Console island POSTs `/api/chat`, pumps validated
 `AgentEvent`s through the reducer as they arrive, and every visible element — timeline
 cards, streamed answer, pipeline node states — is a projection of that reducer state.
-No timers, no choreographed progress: the protocol only carries _completion_ events
-(the server emits on each node's `on_chain_end`), so "running" is always an inference
-from the previous stage having finished, and that inference lives in exactly one
-function (`derivePipeline`), where the tests can pin it.
+No timers, no choreographed progress: the stream never announces a node _starting_
+(triage and tool events ride each node's `on_chain_end`; tokens, escalation and
+completion arrive by their own mechanisms), so "running" is always an inference from
+the previous stage having finished, and that inference lives in exactly one function
+(`derivePipeline`), where the tests can pin it.
 
 ## Server/client split — the full ledger
 
@@ -71,15 +72,19 @@ file. Every `'use client'` directive in the app, with its reason:
 | `src/components/health-badge.tsx` | Fetches `/api/health` after mount and holds that state, so the badge reports the engine's actual mode instead of a hardcoded claim                                         |
 
 Everything else — `/evals` (reads committed artefacts at build time and prerenders),
-`/about`, the layout chrome — renders on the server. `RunView` and `PipelinePanel`
-carry no directive: they're presentational modules imported by the Console boundary.
+`/about`, the layout chrome bar that badge — renders on the server. Because the badge
+sits in the root layout, its island (plus the framework runtime) ships on every
+route; the boundary discipline bounds _how much_ is client, not whether hydration
+happens. `RunView` and `PipelinePanel` carry no directive: they're presentational
+modules imported by the Console boundary.
 
 ## Why Next.js and not a Vite SPA
 
 - The evals page is the honest argument: it renders _committed artefacts_ at build
-  time (RSC + `fs.readFile`), ships zero client JavaScript for that route, and can
-  never drift from the files it renders. In a SPA that's a fetch, a loading state and
-  a second copy of the numbers.
+  time (RSC + `fs.readFile`), ships no route-level client JavaScript — the only
+  island on that page is the layout's shared health badge — and can never drift
+  from the files it renders. In a SPA that's a fetch, a loading state and a second
+  copy of the numbers.
 - One deployment story for the whole surface — static prerender for content routes,
   a client island where interactivity is real, and the platform's `/api/*` routing
   underneath.
@@ -92,16 +97,17 @@ This app was written against the docs bundled in `node_modules/next/dist/docs/`
 (the version actually installed — Next 16 differs from what most tutorials and
 training data describe). The guides that shaped this code:
 
-- `01-getting-started/05-server-and-client-components.md` — boundary rules above
-- `02-guides/upgrading/version-16.md` — Turbopack is the default bundler for dev and
-  build; async request APIs are mandatory (this app uses none); middleware is renamed
-  proxy (unused here); React Compiler is stable but opt-in (not enabled)
-- `03-api-reference/05-config/01-next-config-js/turbopack.md` — Turbopack resolves
-  nothing outside its root; `turbopack.root` points at the repository so the
+- `01-app/01-getting-started/05-server-and-client-components.md` — boundary rules above
+- `01-app/02-guides/upgrading/version-16.md` — Turbopack is the default bundler for
+  dev and build; async request APIs are mandatory (this app uses none); middleware is
+  renamed proxy (unused here); React Compiler is stable but opt-in (not enabled)
+- `01-app/03-api-reference/05-config/01-next-config-js/turbopack.md` — Turbopack
+  resolves nothing outside its root; `turbopack.root` points at the repository so the
   cross-package protocol import works (see `next.config.ts`)
-- `02-guides/caching-without-cache-components.md` — the classic caching model applies
-  (`cacheComponents` not enabled); routes with no dynamic APIs prerender static
-- `01-getting-started/16-proxy.md` / `10-error-handling.md` / `06-fetching-data.md`
+- `01-app/02-guides/caching-without-cache-components.md` — the classic caching model
+  applies (`cacheComponents` not enabled); routes with no dynamic APIs prerender static
+- `01-app/01-getting-started/16-proxy.md` / `…/10-error-handling.md` /
+  `…/06-fetching-data.md`
 
 Two deliberate configuration calls, both documented inline in
 [`next.config.ts`](next.config.ts): `turbopack.root` for the monorepo import, and
@@ -111,8 +117,9 @@ nothing until the stream closed).
 
 ## Testing
 
-`vitest run` — 28 behavioural cases in three files, all driven through the real
-reducer with wire-shaped fixtures captured from the deployed engine:
+`vitest run` — behavioural cases in three files, all driven through the real
+reducer with wire-shaped fixtures mirroring payloads observed from the deployed
+engine:
 
 - `stream-reducer.test.ts` — happy path, retry-pass grouping, escalation, the
   error-then-done epilogue, mid-stream transport failure, abort semantics, retry

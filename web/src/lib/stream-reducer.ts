@@ -315,14 +315,17 @@ export function derivePipeline(run: RunState): PipelineView {
   // Resolver. A second tool batch after tokens means the supervisor
   // routed back — the run is in a retry pass even though a draft already
   // streamed (mock mode replays the first pass's draft only once).
-  // Evidence that the resolver/supervisor stages actually ran: tool
-  // batches, streamed tokens, or an escalation (which the graph only
-  // reaches after supervisor scoring). An aborted run without any of
-  // these leaves the stages idle — we don't claim work we never saw.
-  const stagesRan = rounds.length > 0 || sawToken || escalation !== null;
+  // Each stage settles on its *own* evidence — we don't claim work we
+  // never saw. Resolver evidence: tool batches (its on_chain_end flushed
+  // them), or anything downstream of it. Supervisor evidence: streamed
+  // tokens (mock streams from its approval), an escalation (the graph
+  // only reaches it after scoring), or a completed run. A tool batch
+  // alone proves the resolver ran — it says nothing about the judge.
+  const resolverRan = rounds.length > 0 || sawToken || escalation !== null;
+  const supervisorRan = sawToken || escalation !== null || completion !== null;
 
   let resolver: NodeStatus = "idle";
-  if (settled) resolver = stagesRan ? "done" : "idle";
+  if (settled) resolver = resolverRan ? "done" : "idle";
   else if (retries > 0) resolver = "retrying";
   else if (sawToken) resolver = "done";
   else if (triage !== null) resolver = "running";
@@ -330,7 +333,7 @@ export function derivePipeline(run: RunState): PipelineView {
   // Supervisor: scores after each resolver pass; during a retry pass it is
   // about to score again, so it reads as running until the run settles.
   let supervisor: NodeStatus = "idle";
-  if (settled) supervisor = stagesRan ? "done" : "idle";
+  if (settled) supervisor = supervisorRan ? "done" : "idle";
   else if (retries > 0) supervisor = "running";
   else if (sawToken) supervisor = "done";
   else if (rounds.length > 0) supervisor = "running";

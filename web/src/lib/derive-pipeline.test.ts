@@ -119,4 +119,18 @@ describe("derivePipeline", () => {
       human: "idle",
     });
   });
+
+  it("cancelling after a tool batch settles the resolver but never judges the supervisor", () => {
+    // The tool batch is the resolver's own evidence; the supervisor's
+    // verdict needs tokens, an escalation or a completed run — a Stop
+    // press must not promote it from running to done.
+    expect(
+      at([send, ev(thread), ev(triage), ev(toolCall), ev(toolResult), { type: "aborted" }]),
+    ).toMatchObject({
+      triage: "done",
+      resolver: "done",
+      supervisor: "idle",
+      human: "idle",
+    });
+  });
 });

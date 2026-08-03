@@ -34,13 +34,16 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-bg text-ink">
         <header className="sticky top-0 z-20 border-b border-line bg-bg/80 backdrop-blur">
-          <div className="mx-auto flex w-full max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
+          {/* Wraps at phone widths: brand + badge stay on the first row
+              (the mode badge must be visible everywhere), nav drops to a
+              second row. Single row from sm up. */}
+          <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 sm:flex-nowrap sm:px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold">
               <span className="inline-block h-2.5 w-2.5 rounded-full bg-accent" />
               <span>LangGraph Platform</span>
               <span className="hidden text-ink-dim sm:inline">/ console</span>
             </Link>
-            <nav className="ml-auto flex items-center gap-1 text-sm">
+            <nav className="order-3 -mx-2 flex w-full items-center gap-1 text-sm sm:order-none sm:mx-0 sm:ml-auto sm:w-auto">
               <Link
                 href="/"
                 className="rounded-md px-2.5 py-1.5 text-ink-dim transition-colors hover:bg-surface hover:text-ink"
@@ -62,7 +65,9 @@ export default function RootLayout({
             </nav>
             {/* Honesty layer: the badge reports /api/health on every page
                 instead of hardcoding a claim about the deployment. */}
-            <HealthBadge />
+            <span className="ml-auto shrink-0 sm:ml-0">
+              <HealthBadge />
+            </span>
             <a
               href={REPO_URL}
               target="_blank"

@@ -99,5 +99,16 @@ jobs:
       - name: Behavioural tests (reducer, pipeline projection, rendering)
         run: npm test
 
-      - name: Production build — all routes must prerender static
+      - name: Production build
         run: npm run build
+
+      # next build succeeds even if a route silently turns dynamic — this
+      # is the actual gate for "every route prerenders static".
+      - name: Assert every route prerendered static
+        run: |
+          node -e "
+            const m = require('./.next/prerender-manifest.json');
+            const dyn = Object.keys(m.dynamicRoutes);
+            if (dyn.length) { console.error('dynamic routes:', dyn); process.exit(1); }
+            console.log('static routes:', Object.keys(m.routes).join(' '));
+          "

@@ -13,6 +13,22 @@ type Health =
   | { kind: "unreachable" }
   | { kind: "ok"; mode: string; version: string };
 
+/**
+ * Runtime check instead of a type assertion — same discipline the stream
+ * gets from zod. A hand-rolled guard rather than a zod schema on purpose:
+ * "zod" here would resolve from web/node_modules while the protocol's
+ * schemas resolve theirs from tools/node_modules, bundling a second zod
+ * for one three-field object.
+ */
+function parseHealth(x: unknown): { mode: string; version: string } | null {
+  if (typeof x !== "object" || x === null) return null;
+  const mode = (x as Record<string, unknown>).mode;
+  const version = (x as Record<string, unknown>).version;
+  return typeof mode === "string" && typeof version === "string"
+    ? { mode, version }
+    : null;
+}
+
 export function HealthBadge() {
   const [health, setHealth] = useState<Health>({ kind: "loading" });
 
@@ -20,8 +36,12 @@ export function HealthBadge() {
     let alive = true;
     fetch("/api/health")
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-      .then((j: { mode?: string; version?: string }) => {
-        if (alive) setHealth({ kind: "ok", mode: j.mode ?? "unknown", version: j.version ?? "?" });
+      .then((j: unknown) => {
+        if (!alive) return;
+        const parsed = parseHealth(j);
+        // An answer that doesn't look like the health contract is treated
+        // the same as no answer — the badge never renders trusted garbage.
+        setHealth(parsed ? { kind: "ok", ...parsed } : { kind: "unreachable" });
       })
       .catch(() => {
         if (alive) setHealth({ kind: "unreachable" });

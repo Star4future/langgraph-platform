@@ -118,10 +118,34 @@ See `ARCHITECTURE.md` for full diagrams and design decisions.
 ✅ Vertical authoring guide
 ✅ Full unit + integration tests
 ✅ Durable HITL — set `CHECKPOINT_DATABASE_URL` to back the checkpointer with Postgres so paused escalations survive restarts (demos fall back to in-memory)
+✅ Web console — Next.js 16 front end over the same typed protocol (see below)
 
 🔜 v1.1 — Second reference vertical (validation that the 2-day vertical-authoring claim is real)
 🔜 v1.2 — Multi-LLM routing (cheap Triage, premium Resolver)
 🔜 v1.3 — Long-term memory (Redis)
+
+---
+
+## Web console (`web/`)
+
+A Next.js 16 + React 19 + TypeScript console over the engine's event stream:
+
+- **Streaming chat** — every SSE event rendered as it arrives (triage
+  classification, tool_call/tool_result pairs grouped into resolver passes,
+  token-streamed answers, escalations, completion metadata), consumed through
+  the same zod-validated client in `tools/sse-client.ts` that the CLI and the
+  Node tests use. Cancellation, stream-cut error states and context-keeping
+  retry included.
+- **Run pipeline panel** — Triage → Resolver → Supervisor → (Human) node states
+  derived purely from wire facts; the protocol carries completion events only,
+  so "running" is an explicit inference, never an animation.
+- **Evals page** — `eval/EVAL-RESULTS.md` and the 30-scenario dataset rendered
+  at build time, imperfect cells called out instead of averaged away.
+- **Honesty layer** — the header badge reports `GET /api/health` (mock vs live)
+  rather than hardcoding a claim.
+
+Architecture, the server/client-boundary ledger, Next 16 notes and the test map:
+[`web/README.md`](web/README.md).
 
 ---
 
@@ -161,7 +185,8 @@ langgraph-platform/
 ├── eval/                     ← scenarios + harness + reports
 ├── tests/                    ← unit + integration (Python)
 ├── tools/                    ← typed, zod-validated TS SSE client + Node CLI (own CI job)
-├── web/                      ← browser bundle of the TS client (imported by index.html)
+├── web/                      ← Next.js 16 console (chat · pipeline panel · evals) + the
+│                                committed browser bundle of the TS client (own CI job)
 └── docs/                     ← QUICKSTART, LANGGRAPH-DESIGN, DEPLOYMENT-GUIDE
 ```
 

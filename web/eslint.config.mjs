@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Committed esbuild output (built from tools/sse-client.ts, guarded by
+    // the CI drift gate) — generated code isn't lint material.
+    "sse-client.mjs",
   ]),
 ]);
 

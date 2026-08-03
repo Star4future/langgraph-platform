@@ -97,8 +97,7 @@ export function Console() {
       await streamAgentChat(
         { message, session_id: sessionRef.current, customer_id: "web_visitor" },
         {
-          onEvent: (event) =>
-            dispatch({ type: "event", event, atMs: performance.now() }),
+          onEvent: (event) => dispatch({ type: "event", event, atMs: performance.now() }),
         },
         controller.signal,
       );
@@ -146,9 +145,7 @@ export function Console() {
       <section className="flex min-h-[520px] flex-col rounded-xl border border-line bg-surface">
         <div className="flex items-center gap-2 border-b border-line px-4 py-3">
           <span className="h-2 w-2 rounded-full bg-ok" />
-          <h2 className="text-sm font-medium">
-            Education vertical — parent support
-          </h2>
+          <h2 className="text-sm font-medium">Education vertical — parent support</h2>
           <span className="ml-auto font-mono text-[11px] text-ink-dim">
             POST /api/chat · text/event-stream
           </span>
@@ -157,10 +154,9 @@ export function Console() {
         <div ref={logRef} className="log-scroll flex-1 space-y-4 overflow-y-auto px-4 py-4">
           {state.turns.length === 0 && (
             <div className="rounded-lg border border-line bg-surface-2 px-4 py-3 text-sm leading-6 text-ink-dim">
-              Hi — this console drives the engine&apos;s education vertical.
-              Ask about subscriptions, plans, refunds or family discounts, or
-              start from an example below. Every event you&apos;ll see arrives
-              over a real server-sent stream.
+              Hi — this console drives the engine&apos;s education vertical. Ask about
+              subscriptions, plans, refunds or family discounts, or start from an example below.
+              Every event you&apos;ll see arrives over a real server-sent stream.
             </div>
           )}
 
@@ -228,10 +224,7 @@ export function Console() {
       </section>
 
       {/* ── Pipeline column ─────────────────────────────────────── */}
-      <PipelinePanel
-        view={last ? derivePipeline(last.run) : null}
-        run={last?.run ?? null}
-      />
+      <PipelinePanel view={last ? derivePipeline(last.run) : null} run={last?.run ?? null} />
     </div>
   );
 }

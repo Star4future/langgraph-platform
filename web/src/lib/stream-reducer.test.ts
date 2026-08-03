@@ -82,10 +82,7 @@ describe("happy path", () => {
 
   it("pairs tool results onto their calls within one pass", () => {
     expect(run.rounds).toHaveLength(1);
-    expect(run.rounds[0].tools.map((t) => t.tool)).toEqual([
-      "lookup_subscription",
-      "switch_plan",
-    ]);
+    expect(run.rounds[0].tools.map((t) => t.tool)).toEqual(["lookup_subscription", "switch_plan"]);
     expect(run.rounds[0].tools.every((t) => t.settled)).toBe(true);
   });
 

@@ -118,9 +118,7 @@ export function RunView({ run, onRetry }: { run: RunState; onRetry: () => void }
     <div className="space-y-2">
       {/* Connection meta */}
       {run.threadId ? (
-        <p className="font-mono text-[10px] text-ink-dim">
-          stream open · thread {run.threadId}
-        </p>
+        <p className="font-mono text-[10px] text-ink-dim">stream open · thread {run.threadId}</p>
       ) : run.phase === "connecting" ? (
         <div className="space-y-2" role="status" aria-label="Connecting to the engine">
           <div className="h-9 w-2/3 animate-pulse rounded-lg bg-surface-2" />
@@ -185,13 +183,9 @@ export function RunView({ run, onRetry }: { run: RunState; onRetry: () => void }
           tone="border-warn/40 bg-warn/10"
         >
           <p className="text-xs leading-5">
-            Routed to a person ({run.escalation.reason}). The reviewer picks up
-            a draft scored{" "}
-            <span className="font-mono text-warn">
-              {run.escalation.draftQuality.toFixed(2)}
-            </span>{" "}
-            — the graph is paused on its checkpoint until an operator resumes
-            it.
+            Routed to a person ({run.escalation.reason}). The reviewer picks up a draft scored{" "}
+            <span className="font-mono text-warn">{run.escalation.draftQuality.toFixed(2)}</span> —
+            the graph is paused on its checkpoint until an operator resumes it.
           </p>
         </EventShell>
       )}
@@ -201,9 +195,7 @@ export function RunView({ run, onRetry }: { run: RunState; onRetry: () => void }
       {run.phase === "error" && (
         <div role="alert">
           <EventShell tag="error" tone="border-err/40 bg-err/10">
-            <p className="text-xs leading-5 text-err">
-              {run.errorMessage ?? "The run failed."}
-            </p>
+            <p className="text-xs leading-5 text-err">{run.errorMessage ?? "The run failed."}</p>
           </EventShell>
         </div>
       )}
@@ -229,8 +221,7 @@ export function RunView({ run, onRetry }: { run: RunState; onRetry: () => void }
       {/* Completion meta */}
       {run.completion && (
         <p aria-live="polite" className="font-mono text-[10px] text-ink-dim">
-          done · {run.completion.latency_ms} ms · {run.completion.tokens} tokens
-          · mode:{" "}
+          done · {run.completion.latency_ms} ms · {run.completion.tokens} tokens · mode:{" "}
           <span className={run.completion.mode === "mock" ? "text-warn" : "text-ok"}>
             {run.completion.mode}
           </span>

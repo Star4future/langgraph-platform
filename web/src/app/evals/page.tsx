@@ -19,8 +19,7 @@ export default async function EvalsPage() {
         Smoke-eval results — education vertical
       </h1>
       <p className="mt-2 text-sm text-ink-dim">
-        Every number on this page is parsed at build time from two committed
-        artefacts:{" "}
+        Every number on this page is parsed at build time from two committed artefacts:{" "}
         <a
           href={`${REPO}/blob/main/eval/EVAL-RESULTS.md`}
           className="font-mono text-xs underline decoration-line underline-offset-2 hover:text-ink"
@@ -43,19 +42,17 @@ export default async function EvalsPage() {
           This is a smoke suite in deterministic mock mode — not a benchmark.
         </p>
         <p className="mt-1 text-ink-dim">
-          The LLM is replaced by a keyword-matched mock, so these numbers
-          exercise the <em>pipeline</em> — graph routing, tool dispatch,
-          escalation logic, the retry loop and the judge — not model quality.
-          The repository&apos;s own{" "}
+          The LLM is replaced by a keyword-matched mock, so these numbers exercise the{" "}
+          <em>pipeline</em> — graph routing, tool dispatch, escalation logic, the retry loop and the
+          judge — not model quality. The repository&apos;s own{" "}
           <a
             href={`${REPO}/blob/main/EXPERT-REVIEW.md`}
             className="underline decoration-line underline-offset-2 hover:text-ink"
           >
             expert review
           </a>{" "}
-          says it plainly: thirty hand-written cases with deterministic mocks
-          are “a smoke test, not a benchmark”. A live-LLM run is the follow-up
-          — expect lower, noisier numbers there.
+          says it plainly: thirty hand-written cases with deterministic mocks are “a smoke test, not
+          a benchmark”. A live-LLM run is the follow-up — expect lower, noisier numbers there.
         </p>
       </div>
 
@@ -112,10 +109,9 @@ export default async function EvalsPage() {
       {/* The imperfect cells, called out rather than buried */}
       <h2 className="mt-8 text-lg font-medium">Where the ✗ are</h2>
       <p className="mt-1 text-sm text-ink-dim">
-        {failedCells.length} scenario{failedCells.length === 1 ? "" : "s"} miss
-        a sub-check while still passing overall — they are why tool-choice and
-        escalation precision sit below 100%, and they are listed here rather
-        than averaged away.
+        {failedCells.length} scenario{failedCells.length === 1 ? "" : "s"} miss a sub-check while
+        still passing overall — they are why tool-choice and escalation precision sit below 100%,
+        and they are listed here rather than averaged away.
       </p>
       <ul className="mt-2 space-y-1 text-sm">
         {failedCells.map((s) => (
@@ -128,9 +124,7 @@ export default async function EvalsPage() {
             ]
               .filter(Boolean)
               .join("; ")}
-            {s.scenario && (
-              <span className="text-ink-dim"> (“{s.scenario.input}”)</span>
-            )}
+            {s.scenario && <span className="text-ink-dim"> (“{s.scenario.input}”)</span>}
           </li>
         ))}
       </ul>

@@ -23,8 +23,7 @@ const nextConfig: NextConfig = {
     // demo when no local engine is up). In production Vercel routes
     // /api/* to the FastAPI function before requests reach Next, so this
     // rewrite never fires there.
-    const engine =
-      process.env.ENGINE_ORIGIN ?? "https://langgraph-platform-demo.vercel.app";
+    const engine = process.env.ENGINE_ORIGIN ?? "https://langgraph-platform-demo.vercel.app";
     return [{ source: "/api/:path*", destination: `${engine}/api/:path*` }];
   },
 };

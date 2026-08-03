@@ -27,10 +27,9 @@ export default function Home() {
           Agent workflow console
         </h1>
         <p className="mt-2 max-w-3xl text-sm leading-6 text-ink-dim sm:text-base">
-          A live view into the Triage → Resolver → Supervisor graph: every
-          server-sent event rendered as it arrives, with the run pipeline
-          beside it. Education vertical loaded; responses come from the
-          engine&apos;s deterministic mock mode.
+          A live view into the Triage → Resolver → Supervisor graph: every server-sent event
+          rendered as it arrives, with the run pipeline beside it. Education vertical loaded;
+          responses come from the engine&apos;s deterministic mock mode.
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
           {LINKS.map((l) => (

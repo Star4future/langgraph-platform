@@ -78,7 +78,12 @@ function rows(section: string): string[][] {
   return section
     .split("\n")
     .filter((l) => l.trim().startsWith("|"))
-    .map((l) => l.split("|").slice(1, -1).map((c) => c.trim()))
+    .map((l) =>
+      l
+        .split("|")
+        .slice(1, -1)
+        .map((c) => c.trim()),
+    )
     .filter((cells) => !cells[0]?.startsWith("---") && !cells[0]?.startsWith(":"))
     .slice(1); // drop the header row
 }
@@ -125,20 +130,18 @@ export async function loadEvalData(): Promise<EvalData> {
       }),
   );
 
-  const results: EvalData["scenarios"] = rows(section(md, "## Per-scenario results")).map(
-    (c) => ({
-      id: c[0],
-      category: c[1],
-      difficulty: c[2],
-      pass: c[3] === "✓",
-      intent: c[4] === "✓",
-      tools: c[5] === "✓",
-      human: c[6] === "✓",
-      quality: c[7],
-      latency: c[8],
-      scenario: scenarios.get(c[0]) ?? null,
-    }),
-  );
+  const results: EvalData["scenarios"] = rows(section(md, "## Per-scenario results")).map((c) => ({
+    id: c[0],
+    category: c[1],
+    difficulty: c[2],
+    pass: c[3] === "✓",
+    intent: c[4] === "✓",
+    tools: c[5] === "✓",
+    human: c[6] === "✓",
+    quality: c[7],
+    latency: c[8],
+    scenario: scenarios.get(c[0]) ?? null,
+  }));
 
   return {
     runAt,

@@ -16,11 +16,25 @@ import {
 } from "./stream-reducer";
 
 const thread: AgentEvent = { type: "thread", thread_id: "web-t1" };
-const triage: AgentEvent = { type: "triage", intent: "refund_request", confidence: 0.88, urgency: "medium" };
+const triage: AgentEvent = {
+  type: "triage",
+  intent: "refund_request",
+  confidence: 0.88,
+  urgency: "medium",
+};
 const toolCall: AgentEvent = { type: "tool_call", tool: "check_refund_eligibility", arguments: {} };
-const toolResult: AgentEvent = { type: "tool_result", tool: "check_refund_eligibility", result: { eligible: true } };
+const toolResult: AgentEvent = {
+  type: "tool_result",
+  tool: "check_refund_eligibility",
+  result: { eligible: true },
+};
 const token: AgentEvent = { type: "token", delta: "Refund approved." };
-const escalation: AgentEvent = { type: "human_escalation", session_id: "web-t1", reason: "policy_triggered", draft_quality: 0.62 };
+const escalation: AgentEvent = {
+  type: "human_escalation",
+  session_id: "web-t1",
+  reason: "policy_triggered",
+  draft_quality: 0.62,
+};
 const done: AgentEvent = { type: "done", latency_ms: 180, tokens: 12, mode: "mock" };
 
 function at(actions: ConsoleAction[]): ReturnType<typeof derivePipeline> {

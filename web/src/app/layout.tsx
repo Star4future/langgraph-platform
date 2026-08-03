@@ -31,10 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-bg text-ink">
         <header className="sticky top-0 z-20 border-b border-line bg-bg/80 backdrop-blur">
           <div className="mx-auto flex w-full max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
@@ -82,7 +79,10 @@ export default function RootLayout({
         <footer className="border-t border-line py-6 text-center text-xs text-ink-dim">
           <p>
             Reference implementation, mock mode — engine:{" "}
-            <a href={REPO_URL} className="underline decoration-line underline-offset-2 hover:text-ink">
+            <a
+              href={REPO_URL}
+              className="underline decoration-line underline-offset-2 hover:text-ink"
+            >
               github.com/Star4future/langgraph-platform
             </a>
           </p>

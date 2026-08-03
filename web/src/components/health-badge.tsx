@@ -9,9 +9,7 @@
 import { useEffect, useState } from "react";
 
 type Health =
-  | { kind: "loading" }
-  | { kind: "unreachable" }
-  | { kind: "ok"; mode: string; version: string };
+  { kind: "loading" } | { kind: "unreachable" } | { kind: "ok"; mode: string; version: string };
 
 /**
  * Runtime check instead of a type assertion — same discipline the stream
@@ -24,9 +22,7 @@ function parseHealth(x: unknown): { mode: string; version: string } | null {
   if (typeof x !== "object" || x === null) return null;
   const mode = (x as Record<string, unknown>).mode;
   const version = (x as Record<string, unknown>).version;
-  return typeof mode === "string" && typeof version === "string"
-    ? { mode, version }
-    : null;
+  return typeof mode === "string" && typeof version === "string" ? { mode, version } : null;
 }
 
 export function HealthBadge() {
@@ -63,7 +59,10 @@ export function HealthBadge() {
   }
   if (health.kind === "unreachable") {
     return (
-      <span className={`${base} border-err/50 bg-err/10 text-err`} title="/api/health did not answer">
+      <span
+        className={`${base} border-err/50 bg-err/10 text-err`}
+        title="/api/health did not answer"
+      >
         ENGINE OFFLINE
       </span>
     );

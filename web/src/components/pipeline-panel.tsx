@@ -56,13 +56,7 @@ function Node({
   );
 }
 
-export function PipelinePanel({
-  view,
-  run,
-}: {
-  view: PipelineView | null;
-  run: RunState | null;
-}) {
+export function PipelinePanel({ view, run }: { view: PipelineView | null; run: RunState | null }) {
   // Derived aggregates come from the projection; `run` is only read for
   // presentational detail (intent text, draft score, reason strings).
   const toolCount = view?.toolCount ?? 0;
@@ -72,8 +66,8 @@ export function PipelinePanel({
       <div className="border-b border-line px-4 py-3">
         <h2 className="text-sm font-medium">Run pipeline</h2>
         <p className="mt-0.5 text-xs text-ink-dim">
-          Derived from the event stream — the protocol carries completion
-          events, so “running” is an inference, never an animation.
+          Derived from the event stream — the protocol carries completion events, so “running” is an
+          inference, never an animation.
         </p>
       </div>
 

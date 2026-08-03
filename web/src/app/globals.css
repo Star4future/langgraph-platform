@@ -45,13 +45,20 @@ body {
   animation: caret-blink 1s steps(1) infinite;
 }
 @keyframes caret-blink {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 /* Soft pulse for pipeline nodes whose work is inferred in progress. */
 @keyframes node-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.45; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
 }
 .node-running {
   animation: node-pulse 1.6s ease-in-out infinite;

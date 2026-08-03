@@ -61,7 +61,11 @@ describe("RunView", () => {
   });
 
   it("keeps partial output visible after a cancellation", () => {
-    const run = runFrom([...base, ev({ type: "token", delta: "partial answer" }), { type: "aborted" }]);
+    const run = runFrom([
+      ...base,
+      ev({ type: "token", delta: "partial answer" }),
+      { type: "aborted" },
+    ]);
     render(<RunView run={run} onRetry={() => {}} />);
     expect(screen.getByText(/partial answer/)).toBeTruthy();
     expect(screen.getByText(/cancelled before the stream finished/i)).toBeTruthy();

@@ -1,14 +1,14 @@
 {
-  "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/main.py" },
-    { "source": "/sse-client.mjs", "destination": "/api/main.py" }
+  "builds": [
+    { "src": "web/package.json", "use": "@vercel/next" },
+    { "src": "api/main.py", "use": "@vercel/python" }
   ],
-  "headers": [
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache" }
-      ]
-    }
+      "src": "^/api/(.*)$",
+      "dest": "/api/main.py",
+      "headers": { "Cache-Control": "no-cache" }
+    },
+    { "src": "^/sse-client\\.mjs$", "dest": "/api/main.py" }
   ]
 }

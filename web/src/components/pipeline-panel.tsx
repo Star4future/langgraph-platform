@@ -6,12 +6,14 @@
  */
 import type { NodeStatus, PipelineView, RunState } from "@/lib/stream-reducer";
 
-// Routing constants mirrored from core/graph_builder.py defaults
-// (quality_threshold 0.7, max_retries 2, confidence_floor 0.5).
+// Routing rules mirrored from core/graph_builder.py's
+// route_after_supervisor, in its evaluation order: the human checks run
+// before the quality gate, and exhausted retries also escalate.
+// Defaults: quality_threshold 0.7, max_retries 2, confidence_floor 0.5.
 const EDGE_RULES = [
+  "flagged / conf < 0.5 → human",
   "score ≥ 0.7 → reply",
-  "score < 0.7 → retry (max 2)",
-  "flagged / low-confidence → human",
+  "score < 0.7 → retry (≤2), then human",
 ];
 
 const STATUS_STYLE: Record<NodeStatus, { dot: string; text: string; label: string }> = {
@@ -61,7 +63,9 @@ export function PipelinePanel({
   view: PipelineView | null;
   run: RunState | null;
 }) {
-  const toolCount = run?.rounds.reduce((n, r) => n + r.tools.length, 0) ?? 0;
+  // Derived aggregates come from the projection; `run` is only read for
+  // presentational detail (intent text, draft score, reason strings).
+  const toolCount = view?.toolCount ?? 0;
 
   return (
     <aside className="h-fit rounded-xl border border-line bg-surface lg:sticky lg:top-16">

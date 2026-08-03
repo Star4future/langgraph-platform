@@ -289,6 +289,8 @@ export interface PipelineView {
   human: NodeStatus;
   /** Resolver passes beyond the first. */
   retries: number;
+  /** Tool invocations across all passes. */
+  toolCount: number;
 }
 
 /**
@@ -304,6 +306,7 @@ export function derivePipeline(run: RunState): PipelineView {
   const finished = phase === "done" || phase === "error" || phase === "aborted";
   const settled = finished || escalation !== null || completion !== null;
   const retries = Math.max(0, rounds.length - 1);
+  const toolCount = rounds.reduce((n, r) => n + r.tools.length, 0);
 
   // Triage: running once the stream opens, classified on the triage event.
   const triageStatus: NodeStatus =
@@ -332,10 +335,13 @@ export function derivePipeline(run: RunState): PipelineView {
   else if (sawToken) supervisor = "done";
   else if (rounds.length > 0) supervisor = "running";
 
-  // Human: only lit by an explicit escalation event.
+  // Human: only lit by an explicit escalation event. "Not needed" is a
+  // conclusion the supervisor reaches — a run that errored or was
+  // cancelled never reached it, so those stay idle rather than claiming
+  // the escalation decision was made.
   let human: NodeStatus = "idle";
   if (escalation !== null) human = "escalated";
-  else if (finished) human = "skipped";
+  else if (phase === "done") human = "skipped";
 
-  return { triage: triageStatus, resolver, supervisor, human, retries };
+  return { triage: triageStatus, resolver, supervisor, human, retries, toolCount };
 }

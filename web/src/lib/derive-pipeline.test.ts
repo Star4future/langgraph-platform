@@ -53,6 +53,7 @@ describe("derivePipeline", () => {
     expect(at([send, ev(thread), ev(triage), ev(toolCall), ev(toolResult)])).toMatchObject({
       resolver: "running",
       supervisor: "running",
+      toolCount: 1,
     });
   });
 
@@ -99,7 +100,9 @@ describe("derivePipeline", () => {
       triage: "done",
       resolver: "idle", // no tool batch, tokens or escalation ever arrived
       supervisor: "idle",
-      human: "skipped",
+      // "not needed" is the supervisor's conclusion; a cancelled run never
+      // reached it, so the human lane stays idle too.
+      human: "idle",
     });
   });
 });
